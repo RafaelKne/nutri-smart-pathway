@@ -31,8 +31,22 @@ export const AuthForm = ({ onSuccess }: AuthFormProps) => {
       let success = false;
       if (isLogin) {
         success = await login(formData.email, formData.password);
+        if (!success) {
+          toast({
+            title: "Erro no login",
+            description: "E-mail ou senha incorretos. Verifique seus dados ou crie uma conta.",
+            variant: "destructive",
+          });
+        }
       } else {
         success = await register(formData.name, formData.email, formData.password);
+        if (!success) {
+          toast({
+            title: "Erro no cadastro",
+            description: "Este e-mail já está cadastrado. Tente fazer login.",
+            variant: "destructive",
+          });
+        }
       }
 
       if (success) {
@@ -41,12 +55,6 @@ export const AuthForm = ({ onSuccess }: AuthFormProps) => {
           description: isLogin ? "Bem-vindo de volta!" : "Sua conta foi criada com sucesso!",
         });
         onSuccess?.();
-      } else {
-        toast({
-          title: "Erro",
-          description: "Verifique suas credenciais e tente novamente.",
-          variant: "destructive",
-        });
       }
     } catch (error) {
       toast({

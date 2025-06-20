@@ -25,6 +25,7 @@ interface UserProfile {
 interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
+  registeredUsers: User[];
   login: (email: string, password: string) => Promise<boolean>;
   register: (name: string, email: string, password: string) => Promise<boolean>;
   logout: () => void;
@@ -36,32 +37,46 @@ export const useAuthStore = create<AuthState>()(
     (set, get) => ({
       user: null,
       isAuthenticated: false,
+      registeredUsers: [],
 
       login: async (email: string, password: string) => {
-        // Simulação de autenticação
-        if (email && password) {
-          const user: User = {
-            id: '1',
-            name: email.split('@')[0],
-            email,
-            isPremium: false,
-          };
-          set({ user, isAuthenticated: true });
+        const { registeredUsers } = get();
+        
+        // Procurar usuário registrado
+        const existingUser = registeredUsers.find(u => u.email === email);
+        
+        if (existingUser && email && password) {
+          set({ user: existingUser, isAuthenticated: true });
           return true;
         }
+        
         return false;
       },
 
       register: async (name: string, email: string, password: string) => {
-        // Simulação de registro
+        const { registeredUsers } = get();
+        
+        // Verificar se usuário já existe
+        const existingUser = registeredUsers.find(u => u.email === email);
+        if (existingUser) {
+          return false;
+        }
+        
         if (name && email && password) {
-          const user: User = {
+          const newUser: User = {
             id: Date.now().toString(),
             name,
             email,
             isPremium: false,
           };
-          set({ user, isAuthenticated: true });
+          
+          const updatedUsers = [...registeredUsers, newUser];
+          
+          set({ 
+            user: newUser, 
+            isAuthenticated: true,
+            registeredUsers: updatedUsers
+          });
           return true;
         }
         return false;
@@ -72,13 +87,20 @@ export const useAuthStore = create<AuthState>()(
       },
 
       updateProfile: (profile: UserProfile) => {
-        const { user } = get();
+        const { user, registeredUsers } = get();
         if (user) {
+          const updatedUser = {
+            ...user,
+            profile,
+          };
+          
+          const updatedUsers = registeredUsers.map(u => 
+            u.id === user.id ? updatedUser : u
+          );
+          
           set({
-            user: {
-              ...user,
-              profile,
-            },
+            user: updatedUser,
+            registeredUsers: updatedUsers
           });
         }
       },
