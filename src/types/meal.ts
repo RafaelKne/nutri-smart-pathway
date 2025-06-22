@@ -19,6 +19,6 @@ export interface MealState {
   meals: Meal[];
   consumedMeals: number[];
   markMealAsConsumed: (mealId: number) => void;
-  generateNewPlan: () => void;
-  substituteMeal: (mealId: number) => void;
+  generateNewPlan: (dietaryPreferences?: string[]) => void;
+  substituteMeal: (mealId: number, dietaryPreferences?: string[]) => void;
 }

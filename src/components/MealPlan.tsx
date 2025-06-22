@@ -4,11 +4,16 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Clock, Users, ChefHat, Check } from "lucide-react";
 import { useMealStore } from "@/store/mealStore";
+import { useAuthStore } from "@/store/authStore";
 import { useToast } from "@/hooks/use-toast";
+import { WaterTracker } from "./WaterTracker";
 
 export const MealPlan = () => {
   const { meals, markMealAsConsumed, generateNewPlan, substituteMeal } = useMealStore();
+  const { user } = useAuthStore();
   const { toast } = useToast();
+
+  const userDietaryPreferences = user?.profile?.dietaryPreferences || [];
 
   const handleMarkAsConsumed = (mealId: number, mealTitle: string, isConsumed: boolean) => {
     markMealAsConsumed(mealId);
@@ -19,25 +24,39 @@ export const MealPlan = () => {
   };
 
   const handleSubstituteMeal = (mealId: number) => {
-    substituteMeal(mealId);
+    substituteMeal(mealId, userDietaryPreferences);
     toast({
       title: "Refeição substituída!",
-      description: "Uma nova opção foi gerada para você",
+      description: "Uma nova opção foi gerada respeitando suas preferências dietéticas",
     });
   };
 
   const handleGenerateNewPlan = () => {
-    generateNewPlan();
+    generateNewPlan(userDietaryPreferences);
     toast({
       title: "Novo plano gerado!",
-      description: "Seu plano de refeições foi atualizado",
+      description: "Seu plano de refeições foi atualizado respeitando suas preferências dietéticas",
     });
   };
 
   return (
     <div className="space-y-6">
+      {/* Water Tracker */}
+      <WaterTracker />
+
       <div className="flex items-center justify-between">
-        <h3 className="text-2xl font-bold">Seu Plano de Hoje</h3>
+        <div>
+          <h3 className="text-2xl font-bold">Seu Plano de Hoje</h3>
+          {userDietaryPreferences.length > 0 && (
+            <div className="flex gap-2 mt-2">
+              {userDietaryPreferences.map((pref) => (
+                <Badge key={pref} variant="outline" className="text-green-600 border-green-300">
+                  {pref}
+                </Badge>
+              ))}
+            </div>
+          )}
+        </div>
         <Button 
           variant="outline" 
           className="border-green-500 text-green-600 hover:bg-green-50"

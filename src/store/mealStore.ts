@@ -22,17 +22,17 @@ export const useMealStore = create<MealState>()(
         }));
       },
 
-      generateNewPlan: () => {
-        const newMeals = generateNewMealPlan();
+      generateNewPlan: (dietaryPreferences?: string[]) => {
+        const newMeals = generateNewMealPlan(dietaryPreferences);
         set({ meals: newMeals, consumedMeals: [] });
       },
 
-      substituteMeal: (mealId: number) => {
+      substituteMeal: (mealId: number, dietaryPreferences?: string[]) => {
         const { meals } = get();
         const mealToReplace = meals.find(meal => meal.id === mealId);
         if (!mealToReplace) return;
 
-        const newMeal = getAlternativeMeal(mealToReplace.name);
+        const newMeal = getAlternativeMeal(mealToReplace.name, dietaryPreferences);
         if (!newMeal) return;
 
         set((state) => ({
