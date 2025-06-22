@@ -88,6 +88,52 @@
   .glass-effect {
     @apply bg-white/80 backdrop-blur-sm border border-white/20;
   }
+
+  /* Animações suaves */
+  .animate-bounce {
+    animation: bounce 3s infinite;
+  }
+
+  .animate-pulse {
+    animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  /* Efeitos de hover melhorados */
+  .hover-glow {
+    @apply transition-all duration-300 hover:shadow-lg hover:shadow-green-200/50;
+  }
+
+  /* Gradientes animados */
+  .animated-gradient {
+    background: linear-gradient(-45deg, #10b981, #059669, #047857, #065f46);
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
+  }
+
+  @keyframes gradient {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  /* Efeitos de loading */
+  .spinner {
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
 }
 
 a[href*="lovable.dev"], iframe[src*="lovable.dev"], div[style*="Edit with Lovable"], .lovable-badge {display: none !important; opacity: 0 !important;visibility: hidden !important;pointer-events: none !important; position: absolute !important; z-index: -9999 !important;}

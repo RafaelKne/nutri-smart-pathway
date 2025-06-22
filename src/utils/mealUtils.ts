@@ -2,6 +2,7 @@
 import { Meal } from "@/types/meal";
 import { defaultMeals } from "@/data/defaultMeals";
 import { alternativeMeals } from "@/data/alternativeMeals";
+import { basicMeals } from "@/data/basicMeals";
 import { vegetarianMeals, veganMeals } from "@/data/vegetarianMeals";
 
 export const getMealsByType = (mealType: string, dietaryPreferences: string[] = []): Meal[] => {
@@ -17,13 +18,12 @@ export const getMealsByType = (mealType: string, dietaryPreferences: string[] = 
     const vegan = veganMeals.filter(meal => meal.name === mealType);
     availableMeals = [...vegetarian, ...vegan];
   }
-  // Se não tiver restrições, usar todas as refeições
+  // Se não tiver restrições dietéticas, usar APENAS refeições comuns (com carne)
   else {
     const defaults = defaultMeals.filter(meal => meal.name === mealType);
     const alternatives = alternativeMeals.filter(meal => meal.name === mealType);
-    const vegetarian = vegetarianMeals.filter(meal => meal.name === mealType);
-    const vegan = veganMeals.filter(meal => meal.name === mealType);
-    availableMeals = [...defaults, ...alternatives, ...vegetarian, ...vegan];
+    const basics = basicMeals.filter(meal => meal.name === mealType);
+    availableMeals = [...defaults, ...alternatives, ...basics];
   }
 
   return availableMeals;

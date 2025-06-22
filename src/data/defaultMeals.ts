@@ -104,5 +104,58 @@ export const defaultMeals: Meal[] = [
       "Adicione o salmão e aspargos, asse por mais 15 minutos"
     ],
     consumed: false
+  },
+  // Adicionando mais opções práticas
+  {
+    id: 5,
+    name: "Café da Manhã",
+    time: "07:00",
+    title: "Pão Integral com Requeijão e Presunto",
+    calories: 350,
+    protein: 20,
+    carbs: 40,
+    fat: 12,
+    prepTime: "5 min",
+    servings: 1,
+    ingredients: [
+      "2 fatias de pão integral",
+      "2 colheres de requeijão light",
+      "2 fatias de presunto magro",
+      "Folhas de alface",
+      "1 copo de suco de laranja"
+    ],
+    instructions: [
+      "Torre levemente o pão",
+      "Espalhe o requeijão",
+      "Adicione o presunto e alface",
+      "Sirva com suco"
+    ],
+    consumed: false
+  },
+  {
+    id: 6,
+    name: "Almoço",
+    time: "12:30",
+    title: "Bife Acebolado com Arroz e Feijão",
+    calories: 520,
+    protein: 38,
+    carbs: 50,
+    fat: 18,
+    prepTime: "25 min",
+    servings: 1,
+    ingredients: [
+      "150g de bife magro",
+      "100g de arroz",
+      "80g de feijão",
+      "1 cebola média",
+      "Salada verde"
+    ],
+    instructions: [
+      "Grelhe o bife e reserve",
+      "Refogue a cebola",
+      "Cozinhe arroz e feijão",
+      "Monte o prato com salada"
+    ],
+    consumed: false
   }
 ];
