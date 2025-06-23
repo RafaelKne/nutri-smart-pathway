@@ -68,14 +68,25 @@ export const AuthForm = ({
     }
   };
   return <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Background decorative elements */}
+      {/* Enhanced background with more visual elements */}
       <div className="absolute inset-0 bg-gradient-to-br from-green-50 via-blue-50 to-emerald-50">
+        {/* Animated background shapes */}
         <div className="absolute top-20 left-20 w-32 h-32 bg-green-200/30 rounded-full blur-xl animate-pulse"></div>
         <div className="absolute bottom-20 right-20 w-40 h-40 bg-blue-200/30 rounded-full blur-xl animate-pulse delay-1000"></div>
         <div className="absolute top-1/2 left-1/4 w-24 h-24 bg-emerald-200/30 rounded-full blur-lg animate-pulse delay-500"></div>
+        
+        {/* Additional decorative elements */}
+        <div className="absolute top-1/4 right-1/3 w-16 h-16 bg-gradient-to-r from-green-300/20 to-blue-300/20 rounded-full blur-lg animate-pulse delay-700"></div>
+        <div className="absolute bottom-1/3 left-1/3 w-20 h-20 bg-gradient-to-r from-emerald-300/20 to-green-300/20 rounded-full blur-lg animate-pulse delay-300"></div>
+        <div className="absolute top-3/4 right-1/6 w-12 h-12 bg-blue-300/20 rounded-full blur-md animate-pulse delay-900"></div>
+        
+        {/* Geometric shapes */}
+        <div className="absolute top-10 right-10 w-8 h-8 border-2 border-green-300/30 rotate-45 animate-bounce delay-200"></div>
+        <div className="absolute bottom-10 left-10 w-6 h-6 border-2 border-blue-300/30 rotate-12 animate-bounce delay-500"></div>
+        <div className="absolute top-1/3 left-10 w-4 h-4 bg-emerald-300/40 rotate-45 animate-bounce delay-1000"></div>
       </div>
 
-      {/* Floating food icons */}
+      {/* Enhanced floating food icons */}
       <div className="absolute top-1/4 left-1/6 text-green-400/40 animate-bounce">
         <Apple size={48} />
       </div>
@@ -83,7 +94,15 @@ export const AuthForm = ({
         <Salad size={56} />
       </div>
       <div className="absolute top-1/3 right-1/4 text-green-500/40 animate-bounce delay-700">
-        
+        <Utensils size={44} />
+      </div>
+      
+      {/* Additional food icons */}
+      <div className="absolute bottom-1/2 left-1/8 text-blue-400/30 animate-bounce delay-400">
+        <Apple size={32} />
+      </div>
+      <div className="absolute top-3/4 right-1/8 text-green-400/30 animate-bounce delay-800">
+        <Salad size={36} />
       </div>
 
       <Card className="w-full max-w-md glass-effect relative z-10 border border-white/30 shadow-2xl">
@@ -137,6 +156,15 @@ export const AuthForm = ({
               {isLogin ? 'Não tem conta? Criar agora' : 'Já tem conta? Fazer login'}
             </Button>
           </div>
+
+          {/* Admin login hint */}
+          {isLogin && (
+            <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+              <p className="text-xs text-blue-600 text-center">
+                <strong>Admin:</strong> admin@nutriai.com / admin123
+              </p>
+            </div>
+          )}
 
           {/* Features showcase */}
           <div className="mt-8 pt-6 border-t border-gray-100">

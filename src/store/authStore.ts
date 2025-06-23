@@ -6,8 +6,9 @@ interface User {
   id: string;
   name: string;
   email: string;
-  password: string; // Adicionado campo password
+  password: string;
   isPremium: boolean;
+  isAdmin?: boolean;
   profile?: UserProfile;
 }
 
@@ -39,10 +40,32 @@ interface AuthState {
 
 // Função para calcular necessidade diária de água (ml)
 const calculateDailyWater = (weight: number, height: number): number => {
-  // Fórmula: 35ml por kg de peso corporal + ajuste pela altura
   const baseWater = weight * 35;
   const heightAdjustment = height > 170 ? (height - 170) * 10 : 0;
   return Math.round(baseWater + heightAdjustment);
+};
+
+// Conta de administrador padrão
+const adminUser: User = {
+  id: 'admin-001',
+  name: 'Administrador',
+  email: 'admin@nutriai.com',
+  password: 'admin123',
+  isPremium: true,
+  isAdmin: true,
+  profile: {
+    weight: 70,
+    height: 175,
+    age: 30,
+    gender: 'masculino',
+    goal: 'manutencao',
+    activityLevel: 'moderado',
+    dietaryPreferences: [],
+    restrictions: [],
+    mealsPerDay: 4,
+    dailyWaterGoal: 2450,
+    waterConsumed: 0,
+  }
 };
 
 export const useAuthStore = create<AuthState>()(
@@ -50,12 +73,12 @@ export const useAuthStore = create<AuthState>()(
     (set, get) => ({
       user: null,
       isAuthenticated: false,
-      registeredUsers: [],
+      registeredUsers: [adminUser], // Apenas a conta admin existe inicialmente
 
       login: async (email: string, password: string) => {
         const { registeredUsers } = get();
         
-        // Procurar usuário registrado e validar TANTO email quanto senha
+        // Procurar usuário registrado e validar email e senha
         const existingUser = registeredUsers.find(u => 
           u.email === email && u.password === password
         );
@@ -82,8 +105,9 @@ export const useAuthStore = create<AuthState>()(
             id: Date.now().toString(),
             name,
             email,
-            password, // Armazenar senha
+            password,
             isPremium: false,
+            isAdmin: false,
           };
           
           const updatedUsers = [...registeredUsers, newUser];

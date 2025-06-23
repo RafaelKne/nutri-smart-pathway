@@ -2,18 +2,21 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Clock, Users, ChefHat, Check } from "lucide-react";
+import { Clock, Users, ChefHat, Check, Settings } from "lucide-react";
 import { useMealStore } from "@/store/mealStore";
 import { useAuthStore } from "@/store/authStore";
 import { useToast } from "@/hooks/use-toast";
 import { WaterTracker } from "./WaterTracker";
+import { useNavigate } from "react-router-dom";
 
 export const MealPlan = () => {
   const { meals, markMealAsConsumed, generateNewPlan, substituteMeal } = useMealStore();
   const { user } = useAuthStore();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const userDietaryPreferences = user?.profile?.dietaryPreferences || [];
+  const userProfile = user?.profile;
 
   const handleMarkAsConsumed = (mealId: number, mealTitle: string, isConsumed: boolean) => {
     markMealAsConsumed(mealId);
@@ -24,7 +27,7 @@ export const MealPlan = () => {
   };
 
   const handleSubstituteMeal = (mealId: number) => {
-    substituteMeal(mealId, userDietaryPreferences);
+    substituteMeal(mealId, userDietaryPreferences, userProfile);
     toast({
       title: "Refeição substituída!",
       description: "Uma nova opção foi gerada respeitando suas preferências dietéticas",
@@ -32,7 +35,7 @@ export const MealPlan = () => {
   };
 
   const handleGenerateNewPlan = () => {
-    generateNewPlan(userDietaryPreferences);
+    generateNewPlan(userDietaryPreferences, userProfile);
     toast({
       title: "Novo plano gerado!",
       description: "Seu plano de refeições foi atualizado respeitando suas preferências dietéticas",
@@ -57,13 +60,23 @@ export const MealPlan = () => {
             </div>
           )}
         </div>
-        <Button 
-          variant="outline" 
-          className="border-green-500 text-green-600 hover:bg-green-50"
-          onClick={handleGenerateNewPlan}
-        >
-          Gerar Novo Plano
-        </Button>
+        <div className="flex gap-2">
+          <Button 
+            variant="outline" 
+            className="border-green-500 text-green-600 hover:bg-green-50"
+            onClick={() => navigate('/settings')}
+          >
+            <Settings className="h-4 w-4 mr-2" />
+            Configurações
+          </Button>
+          <Button 
+            variant="outline" 
+            className="border-green-500 text-green-600 hover:bg-green-50"
+            onClick={handleGenerateNewPlan}
+          >
+            Gerar Novo Plano
+          </Button>
+        </div>
       </div>
 
       <div className="grid gap-6">
