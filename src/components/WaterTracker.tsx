@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,55 +6,50 @@ import { Badge } from "@/components/ui/badge";
 import { Droplets, Plus, Minus, RotateCcw } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
 import { useToast } from "@/hooks/use-toast";
-
 export const WaterTracker = () => {
-  const { user, updateWaterConsumption, resetDailyWater } = useAuthStore();
-  const { toast } = useToast();
+  const {
+    user,
+    updateWaterConsumption,
+    resetDailyWater
+  } = useAuthStore();
+  const {
+    toast
+  } = useToast();
   const [selectedAmount, setSelectedAmount] = useState(250);
-
   const waterConsumed = user?.profile?.waterConsumed || 0;
   const dailyGoal = user?.profile?.dailyWaterGoal || 2000;
-  const progressPercentage = Math.min((waterConsumed / dailyGoal) * 100, 100);
-
+  const progressPercentage = Math.min(waterConsumed / dailyGoal * 100, 100);
   const quickAmounts = [200, 250, 300, 500];
-
   const addWater = (amount: number) => {
     updateWaterConsumption(amount);
     toast({
       title: "Água adicionada!",
-      description: `${amount}ml adicionados ao seu consumo diário`,
+      description: `${amount}ml adicionados ao seu consumo diário`
     });
   };
-
   const removeWater = (amount: number) => {
     updateWaterConsumption(-amount);
     toast({
       title: "Água removida",
-      description: `${amount}ml removidos do seu consumo`,
+      description: `${amount}ml removidos do seu consumo`
     });
   };
-
   const resetWater = () => {
     resetDailyWater();
     toast({
       title: "Contador resetado",
-      description: "Seu consumo diário foi resetado para 0ml",
+      description: "Seu consumo diário foi resetado para 0ml"
     });
   };
-
   if (!user?.profile) {
-    return (
-      <Card className="glass-effect">
+    return <Card className="glass-effect">
         <CardContent className="p-6 text-center">
           <Droplets className="h-12 w-12 mx-auto mb-4 text-blue-500" />
           <p className="text-gray-600">Configure seu perfil para acessar o contador de água</p>
         </CardContent>
-      </Card>
-    );
+      </Card>;
   }
-
-  return (
-    <Card className="glass-effect">
+  return <Card className="glass-effect">
       <CardHeader className="pb-4">
         <CardTitle className="flex items-center gap-2">
           <Droplets className="h-5 w-5 text-blue-500" />
@@ -81,15 +75,11 @@ export const WaterTracker = () => {
         {/* Water Animation with Clickable Icon */}
         <div className="relative mx-auto w-32 h-32">
           <div className="absolute inset-0 rounded-full border-4 border-blue-200 bg-gradient-to-t from-blue-50 to-white overflow-hidden">
-            <div 
-              className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-blue-400 to-blue-300 transition-all duration-500 ease-out"
-              style={{ height: `${progressPercentage}%` }}
-            />
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-blue-400 to-blue-300 transition-all duration-500 ease-out" style={{
+            height: `${progressPercentage}%`
+          }} />
           </div>
-          <button
-            onClick={() => addWater(selectedAmount)}
-            className="absolute inset-0 flex items-center justify-center hover:bg-blue-50/20 rounded-full transition-colors group"
-          >
+          <button onClick={() => addWater(selectedAmount)} className="absolute inset-0 flex items-center justify-center hover:bg-blue-50/20 rounded-full transition-colors group">
             <Droplets className="h-8 w-8 text-blue-600 group-hover:text-blue-700 transition-colors cursor-pointer" />
           </button>
         </div>
@@ -98,18 +88,10 @@ export const WaterTracker = () => {
         <div className="space-y-3">
           <p className="text-sm font-medium">Adicionar Rapidamente:</p>
           <div className="grid grid-cols-2 gap-2">
-            {quickAmounts.map((amount) => (
-              <Button
-                key={amount}
-                variant="outline"
-                size="sm"
-                onClick={() => addWater(amount)}
-                className="flex items-center gap-1"
-              >
+            {quickAmounts.map(amount => <Button key={amount} variant="outline" size="sm" onClick={() => addWater(amount)} className="flex items-center gap-1">
                 <Plus className="h-3 w-3" />
                 {amount}ml
-              </Button>
-            ))}
+              </Button>)}
           </div>
         </div>
 
@@ -117,41 +99,23 @@ export const WaterTracker = () => {
         <div className="space-y-3">
           <p className="text-sm font-medium">Quantidade Personalizada:</p>
           <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setSelectedAmount(Math.max(50, selectedAmount - 50))}
-            >
+            <Button variant="outline" size="sm" onClick={() => setSelectedAmount(Math.max(50, selectedAmount - 50))}>
               <Minus className="h-3 w-3" />
             </Button>
             <span className="text-center min-w-[80px] font-medium">
               {selectedAmount}ml
             </span>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setSelectedAmount(Math.min(1000, selectedAmount + 50))}
-            >
+            <Button variant="outline" size="sm" onClick={() => setSelectedAmount(Math.min(1000, selectedAmount + 50))}>
               <Plus className="h-3 w-3" />
             </Button>
           </div>
           <div className="flex gap-2">
-            <Button
-              variant="outline"
-              onClick={() => removeWater(selectedAmount)}
-            >
-              <Minus className="h-4 w-4" />
-            </Button>
+            
           </div>
         </div>
 
         {/* Reset Button */}
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={resetWater}
-          className="w-full"
-        >
+        <Button variant="outline" size="sm" onClick={resetWater} className="w-full">
           <RotateCcw className="h-4 w-4 mr-2" />
           Resetar Dia
         </Button>
@@ -164,6 +128,5 @@ export const WaterTracker = () => {
           </p>
         </div>
       </CardContent>
-    </Card>
-  );
+    </Card>;
 };
