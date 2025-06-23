@@ -7,39 +7,47 @@ import { vegetarianMeals, veganMeals } from "@/data/vegetarianMeals";
 
 // Função para calcular TMB (Taxa Metabólica Basal)
 const calculateBMR = (weight: number, height: number, age: number, gender: string): number => {
+  // Garantir que todos os valores são números válidos
+  const validWeight = isNaN(weight) || weight <= 0 ? 70 : weight;
+  const validHeight = isNaN(height) || height <= 0 ? 170 : height;
+  const validAge = isNaN(age) || age <= 0 ? 25 : age;
+  
   if (gender === 'masculino') {
-    return 88.362 + (13.397 * weight) + (4.799 * height) - (5.677 * age);
+    return 88.362 + (13.397 * validWeight) + (4.799 * validHeight) - (5.677 * validAge);
   } else {
-    return 447.593 + (9.247 * weight) + (3.098 * height) - (4.330 * age);
+    return 447.593 + (9.247 * validWeight) + (3.098 * validHeight) - (4.330 * validAge);
   }
 };
 
 // Função para calcular TDEE (Total Daily Energy Expenditure)
 const calculateTDEE = (bmr: number, activityLevel: string): number => {
+  const validBmr = isNaN(bmr) || bmr <= 0 ? 1500 : bmr;
   const activityMultipliers = {
     sedentario: 1.2,
     leve: 1.375,
     moderado: 1.55,
     intenso: 1.725
   };
-  return bmr * (activityMultipliers[activityLevel as keyof typeof activityMultipliers] || 1.2);
+  return validBmr * (activityMultipliers[activityLevel as keyof typeof activityMultipliers] || 1.2);
 };
 
 // Função para calcular calorias diárias baseadas no objetivo
 const calculateDailyCalories = (tdee: number, goal: string): number => {
+  const validTdee = isNaN(tdee) || tdee <= 0 ? 1800 : tdee;
   switch (goal) {
     case 'emagrecimento':
-      return Math.round(tdee * 0.8); // Déficit de 20%
+      return Math.round(validTdee * 0.8); // Déficit de 20%
     case 'ganho_massa':
-      return Math.round(tdee * 1.15); // Superávit de 15%
+      return Math.round(validTdee * 1.15); // Superávit de 15%
     case 'manutencao':
     default:
-      return Math.round(tdee);
+      return Math.round(validTdee);
   }
 };
 
 // Função para calcular macronutrientes
 const calculateMacros = (calories: number, goal: string) => {
+  const validCalories = isNaN(calories) || calories <= 0 ? 1800 : calories;
   let proteinRatio = 0.25;
   let carbRatio = 0.45;
   let fatRatio = 0.30;
@@ -55,9 +63,9 @@ const calculateMacros = (calories: number, goal: string) => {
   }
 
   return {
-    protein: Math.round((calories * proteinRatio) / 4), // 4 cal/g
-    carbs: Math.round((calories * carbRatio) / 4), // 4 cal/g
-    fat: Math.round((calories * fatRatio) / 9) // 9 cal/g
+    protein: Math.round((validCalories * proteinRatio) / 4), // 4 cal/g
+    carbs: Math.round((validCalories * carbRatio) / 4), // 4 cal/g
+    fat: Math.round((validCalories * fatRatio) / 9) // 9 cal/g
   };
 };
 
@@ -96,7 +104,16 @@ export const getRandomMeal = (meals: Meal[]): Meal => {
 
 // Função para ajustar valores nutricionais baseado no perfil
 const adjustMealNutrition = (meal: Meal, userProfile: any, mealIndex: number, totalMeals: number) => {
-  if (!userProfile) return meal;
+  if (!userProfile || !userProfile.weight || !userProfile.height || !userProfile.age) {
+    // Se não tiver perfil completo, usar valores padrão da refeição
+    return {
+      ...meal,
+      calories: meal.calories || 300,
+      protein: meal.protein || 20,
+      carbs: meal.carbs || 30,
+      fat: meal.fat || 10
+    };
+  }
 
   const { weight, height, age, gender, goal, activityLevel } = userProfile;
   
@@ -119,12 +136,13 @@ const adjustMealNutrition = (meal: Meal, userProfile: any, mealIndex: number, to
   const mealCarbs = Math.round(dailyMacros.carbs * distribution[mealIndex]);
   const mealFat = Math.round(dailyMacros.fat * distribution[mealIndex]);
 
+  // Garantir que os valores são válidos
   return {
     ...meal,
-    calories: mealCalories,
-    protein: mealProtein,
-    carbs: mealCarbs,
-    fat: mealFat
+    calories: isNaN(mealCalories) ? meal.calories || 300 : Math.max(100, mealCalories),
+    protein: isNaN(mealProtein) ? meal.protein || 20 : Math.max(5, mealProtein),
+    carbs: isNaN(mealCarbs) ? meal.carbs || 30 : Math.max(5, mealCarbs),
+    fat: isNaN(mealFat) ? meal.fat || 10 : Math.max(3, mealFat)
   };
 };
 
