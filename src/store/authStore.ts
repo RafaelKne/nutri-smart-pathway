@@ -73,21 +73,30 @@ export const useAuthStore = create<AuthState>()(
     (set, get) => ({
       user: null,
       isAuthenticated: false,
-      registeredUsers: [adminUser], // Apenas a conta admin existe inicialmente
+      registeredUsers: [adminUser], // Sempre incluir a conta admin
 
       login: async (email: string, password: string) => {
+        console.log('Tentando login com:', { email, password });
         const { registeredUsers } = get();
         
+        // Log para debug
+        console.log('Usuários registrados:', registeredUsers);
+        
         // Procurar usuário registrado e validar email e senha
-        const existingUser = registeredUsers.find(u => 
-          u.email === email && u.password === password
-        );
+        const existingUser = registeredUsers.find(u => {
+          console.log('Comparando com usuário:', u.email, u.password);
+          return u.email.toLowerCase() === email.toLowerCase() && u.password === password;
+        });
+        
+        console.log('Usuário encontrado:', existingUser);
         
         if (existingUser) {
           set({ user: existingUser, isAuthenticated: true });
+          console.log('Login realizado com sucesso');
           return true;
         }
         
+        console.log('Falha no login');
         return false;
       },
 
@@ -95,7 +104,7 @@ export const useAuthStore = create<AuthState>()(
         const { registeredUsers } = get();
         
         // Verificar se usuário já existe
-        const existingUser = registeredUsers.find(u => u.email === email);
+        const existingUser = registeredUsers.find(u => u.email.toLowerCase() === email.toLowerCase());
         if (existingUser) {
           return false;
         }
