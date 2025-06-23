@@ -158,13 +158,7 @@ export const AuthForm = ({
           </div>
 
           {/* Admin login hint */}
-          {isLogin && (
-            <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
-              <p className="text-xs text-blue-600 text-center">
-                <strong>Admin:</strong> admin@nutriai.com / admin123
-              </p>
-            </div>
-          )}
+          {isLogin}
 
           {/* Features showcase */}
           <div className="mt-8 pt-6 border-t border-gray-100">
