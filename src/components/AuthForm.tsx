@@ -94,7 +94,7 @@ export const AuthForm = ({
         <Salad size={56} />
       </div>
       <div className="absolute top-1/3 right-1/4 text-green-500/40 animate-bounce delay-700">
-        <Utensils size={44} />
+        
       </div>
       
       {/* Additional food icons */}
