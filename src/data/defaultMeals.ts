@@ -1,3 +1,4 @@
+
 import { Meal } from "@/types/meal";
 
 export const defaultMeals: Meal[] = [
@@ -33,6 +34,21 @@ export const defaultMeals: Meal[] = [
   },
   {
     id: 3,
+    name: "Café da Manhã",
+    time: "07:00",
+    title: "Smoothie de Frutas Vermelhas",
+    calories: 250,
+    protein: 15,
+    carbs: 38,
+    fat: 6,
+    prepTime: "8 min",
+    servings: 1,
+    ingredients: ["100g frutas vermelhas", "200ml iogurte grego", "1 colher mel", "10g chia"],
+    instructions: ["Bata tudo no liquidificador", "Adicione chia por cima", "Sirva gelado"],
+    consumed: false
+  },
+  {
+    id: 4,
     name: "Almoço",
     time: "12:00",
     title: "Frango Grelhado com Arroz e Salada",
@@ -47,7 +63,7 @@ export const defaultMeals: Meal[] = [
     consumed: false
   },
   {
-    id: 4,
+    id: 5,
     name: "Almoço",
     time: "12:00",
     title: "Salmão com Batata Doce",
@@ -62,7 +78,22 @@ export const defaultMeals: Meal[] = [
     consumed: false
   },
   {
-    id: 5,
+    id: 6,
+    name: "Almoço",
+    time: "12:00",
+    title: "Carne Magra com Quinoa",
+    calories: 520,
+    protein: 40,
+    carbs: 45,
+    fat: 20,
+    prepTime: "35 min",
+    servings: 1,
+    ingredients: ["150g carne magra", "80g quinoa", "legumes variados", "azeite"],
+    instructions: ["Grelhe a carne", "Cozinhe a quinoa", "Refogue os legumes", "Monte o prato"],
+    consumed: false
+  },
+  {
+    id: 7,
     name: "Lanche da Tarde",
     time: "15:30",
     title: "Iogurte com Granola",
@@ -77,7 +108,7 @@ export const defaultMeals: Meal[] = [
     consumed: false
   },
   {
-    id: 6,
+    id: 8,
     name: "Lanche da Tarde",
     time: "15:30",
     title: "Mix de Castanhas",
@@ -92,7 +123,22 @@ export const defaultMeals: Meal[] = [
     consumed: false
   },
   {
-    id: 7,
+    id: 9,
+    name: "Lanche da Tarde",
+    time: "15:30",
+    title: "Sanduíche Natural",
+    calories: 240,
+    protein: 12,
+    carbs: 28,
+    fat: 10,
+    prepTime: "5 min",
+    servings: 1,
+    ingredients: ["2 fatias pão integral", "peito de peru", "queijo branco", "salada"],
+    instructions: ["Monte o sanduíche", "Corte ao meio", "Sirva"],
+    consumed: false
+  },
+  {
+    id: 10,
     name: "Jantar",
     time: "19:00",
     title: "Sopa de Legumes com Frango",
@@ -107,7 +153,7 @@ export const defaultMeals: Meal[] = [
     consumed: false
   },
   {
-    id: 8,
+    id: 11,
     name: "Jantar",
     time: "19:00",
     title: "Omelete de Vegetais",
@@ -122,7 +168,7 @@ export const defaultMeals: Meal[] = [
     consumed: false
   },
   {
-    id: 9,
+    id: 12,
     name: "Jantar",
     time: "19:00",
     title: "Peixe Assado com Legumes",
@@ -137,7 +183,7 @@ export const defaultMeals: Meal[] = [
     consumed: false
   },
   {
-    id: 10,
+    id: 13,
     name: "Jantar",
     time: "19:00",
     title: "Salada de Quinoa com Proteína",
@@ -149,6 +195,21 @@ export const defaultMeals: Meal[] = [
     servings: 1,
     ingredients: ["80g quinoa", "100g frango grelhado", "tomate cereja", "pepino", "azeite", "limão"],
     instructions: ["Cozinhe a quinoa", "Grelhe o frango", "Corte os vegetais", "Misture tudo com azeite e limão"],
+    consumed: false
+  },
+  {
+    id: 14,
+    name: "Jantar",
+    time: "19:00",
+    title: "Wrap de Frango Light",
+    calories: 380,
+    protein: 30,
+    carbs: 25,
+    fat: 16,
+    prepTime: "15 min",
+    servings: 1,
+    ingredients: ["1 tortilla integral", "120g frango grelhado", "folhas verdes", "tomate", "abacate"],
+    instructions: ["Aqueça a tortilla", "Adicione o frango e vegetais", "Enrole bem", "Corte ao meio"],
     consumed: false
   }
 ];

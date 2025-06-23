@@ -78,7 +78,7 @@ export const WaterTracker = () => {
           </div>
         </div>
 
-        {/* Water Animation */}
+        {/* Water Animation with Clickable Icon */}
         <div className="relative mx-auto w-32 h-32">
           <div className="absolute inset-0 rounded-full border-4 border-blue-200 bg-gradient-to-t from-blue-50 to-white overflow-hidden">
             <div 
@@ -86,9 +86,12 @@ export const WaterTracker = () => {
               style={{ height: `${progressPercentage}%` }}
             />
           </div>
-          <div className="absolute inset-0 flex items-center justify-center">
-            <Droplets className="h-8 w-8 text-blue-600" />
-          </div>
+          <button
+            onClick={() => addWater(selectedAmount)}
+            className="absolute inset-0 flex items-center justify-center hover:bg-blue-50/20 rounded-full transition-colors group"
+          >
+            <Droplets className="h-8 w-8 text-blue-600 group-hover:text-blue-700 transition-colors cursor-pointer" />
+          </button>
         </div>
 
         {/* Quick Add Buttons */}
@@ -134,13 +137,6 @@ export const WaterTracker = () => {
           </div>
           <div className="flex gap-2">
             <Button
-              onClick={() => addWater(selectedAmount)}
-              className="flex-1 bg-blue-500 hover:bg-blue-600 text-white"
-            >
-              <Plus className="h-4 w-4 mr-1" />
-              Adicionar
-            </Button>
-            <Button
               variant="outline"
               onClick={() => removeWater(selectedAmount)}
             >
@@ -164,7 +160,7 @@ export const WaterTracker = () => {
         <div className="bg-blue-50 p-3 rounded-lg">
           <p className="text-xs text-blue-700">
             💡 Dica: Sua meta diária foi calculada com base no seu peso ({user.profile.weight}kg) 
-            e altura ({user.profile.height}cm). Beba pequenas quantidades ao longo do dia!
+            e altura ({user.profile.height}cm). Clique na gota d'água para adicionar {selectedAmount}ml!
           </p>
         </div>
       </CardContent>
