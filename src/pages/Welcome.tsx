@@ -121,9 +121,7 @@ const Welcome = () => {
           <Button size="lg" className="health-gradient text-white font-semibold px-12 py-4 text-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]" onClick={() => navigate('/app')}>
             Começar Agora
           </Button>
-          <p className="text-gray-500 mt-4">
-            Gratuito para começar • Sem compromisso
-          </p>
+          
         </div>
       </div>
     </div>;
