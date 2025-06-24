@@ -1,17 +1,15 @@
+
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 interface User {
-  id: string;
+  id: number;
   name: string;
   email: string;
-  password: string;
-  isPremium: boolean;
-  isAdmin?: boolean;
   profile?: UserProfile;
 }
 
-export interface UserProfile {
+interface UserProfile {
   weight: number;
   height: number;
   age: number;
@@ -21,52 +19,26 @@ export interface UserProfile {
   dietaryPreferences: string[];
   restrictions: string[];
   mealsPerDay: 3 | 4 | 5;
-  dailyWaterGoal?: number;
   waterConsumed?: number;
+  dailyWaterGoal?: number;
 }
 
 interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
-  registeredUsers: User[];
-  login: (email: string, password: string) => Promise<boolean>;
-  register: (name: string, email: string, password: string) => Promise<boolean>;
+  users: Array<{ email: string; password: string; name: string; id: number; profile?: UserProfile }>;
+  login: (email: string, password: string) => boolean;
   logout: () => void;
+  register: (email: string, password: string, name: string) => boolean;
   updateProfile: (profile: UserProfile) => void;
   updateWaterConsumption: (amount: number) => void;
   resetDailyWater: () => void;
-  resetPassword: (email: string, newPassword: string) => Promise<boolean>;
-  findUserByEmail: (email: string) => User | null;
+  resetPassword: (email: string, newPassword: string) => boolean;
 }
 
-// Função para calcular necessidade diária de água (ml)
-const calculateDailyWater = (weight: number, height: number): number => {
-  const baseWater = weight * 35;
-  const heightAdjustment = height > 170 ? (height - 170) * 10 : 0;
-  return Math.round(baseWater + heightAdjustment);
-};
-
-// Conta de administrador padrão resetada
-const adminUser: User = {
-  id: 'admin-001',
-  name: 'Administrador',
-  email: 'admin@nutriai.com',
-  password: 'admin123',
-  isPremium: true,
-  isAdmin: true,
-  profile: {
-    weight: 70,
-    height: 175,
-    age: 30,
-    gender: 'masculino',
-    goal: 'manutencao',
-    activityLevel: 'moderado',
-    dietaryPreferences: [],
-    restrictions: [],
-    mealsPerDay: 4,
-    dailyWaterGoal: 2450,
-    waterConsumed: 0,
-  }
+const calculateDailyWaterGoal = (weight: number, height: number): number => {
+  // Fórmula baseada no peso corporal: 35ml por kg
+  return Math.round(weight * 35);
 };
 
 export const useAuthStore = create<AuthState>()(
@@ -74,76 +46,52 @@ export const useAuthStore = create<AuthState>()(
     (set, get) => ({
       user: null,
       isAuthenticated: false,
-      registeredUsers: [adminUser], // Apenas administrador resetado
+      users: [
+        {
+          id: 1,
+          email: 'admin@nutri.com',
+          password: 'admin123',
+          name: 'Administrador',
+          profile: {
+            weight: 70,
+            height: 170,
+            age: 30,
+            gender: 'masculino',
+            goal: 'manutencao',
+            activityLevel: 'moderado',
+            dietaryPreferences: [],
+            restrictions: [],
+            mealsPerDay: 4,
+            waterConsumed: 0,
+            dailyWaterGoal: 2450
+          }
+        }
+      ],
 
-      login: async (email: string, password: string) => {
-        console.log('Tentando login com:', { email, password });
-        const { registeredUsers } = get();
+      login: (email, password) => {
+        const { users } = get();
+        const user = users.find(u => u.email === email && u.password === password);
         
-        console.log('Usuários registrados:', registeredUsers);
-        
-        const existingUser = registeredUsers.find(u => {
-          const emailMatch = u.email.toLowerCase().trim() === email.toLowerCase().trim();
-          const userPassword = u.password || '';
-          const passwordMatch = userPassword.trim() === password.trim();
-          console.log('Comparando:', { 
-            userEmail: u.email, 
-            inputEmail: email, 
-            emailMatch,
-            userPassword: userPassword,
-            inputPassword: password,
-            passwordMatch,
-            hasPassword: !!u.password
-          });
-          return emailMatch && passwordMatch;
-        });
-        
-        console.log('Usuário encontrado:', existingUser);
-        
-        if (existingUser) {
-          if (!existingUser.password) {
-            existingUser.password = password;
-            const updatedUsers = registeredUsers.map(u => 
-              u.id === existingUser.id ? existingUser : u
-            );
-            set({ registeredUsers: updatedUsers });
+        if (user) {
+          let userProfile = user.profile;
+          
+          // Se o usuário tem perfil mas não tem meta de água, calcular
+          if (userProfile && !userProfile.dailyWaterGoal) {
+            userProfile = {
+              ...userProfile,
+              dailyWaterGoal: calculateDailyWaterGoal(userProfile.weight, userProfile.height),
+              waterConsumed: userProfile.waterConsumed || 0
+            };
           }
           
-          set({ user: existingUser, isAuthenticated: true });
-          console.log('Login realizado com sucesso');
-          return true;
-        }
-        
-        console.log('Falha no login - usuário não encontrado ou credenciais inválidas');
-        return false;
-      },
-
-      register: async (name: string, email: string, password: string) => {
-        const { registeredUsers } = get();
-        
-        const existingUser = registeredUsers.find(u => 
-          u.email.toLowerCase().trim() === email.toLowerCase().trim()
-        );
-        if (existingUser) {
-          return false;
-        }
-        
-        if (name && email && password) {
-          const newUser: User = {
-            id: Date.now().toString(),
-            name: name.trim(),
-            email: email.trim(),
-            password: password.trim(),
-            isPremium: false,
-            isAdmin: false,
-          };
-          
-          const updatedUsers = [...registeredUsers, newUser];
-          
           set({ 
-            user: newUser, 
-            isAuthenticated: true,
-            registeredUsers: updatedUsers
+            user: { 
+              id: user.id, 
+              name: user.name, 
+              email: user.email, 
+              profile: userProfile 
+            }, 
+            isAuthenticated: true 
           });
           return true;
         }
@@ -154,111 +102,99 @@ export const useAuthStore = create<AuthState>()(
         set({ user: null, isAuthenticated: false });
       },
 
-      updateProfile: (profile: UserProfile) => {
-        const { user, registeredUsers } = get();
-        if (user) {
-          // Calcular meta diária de água
-          const dailyWaterGoal = calculateDailyWater(profile.weight, profile.height);
-          
-          const updatedProfile = {
-            ...profile,
-            dailyWaterGoal,
-            waterConsumed: profile.waterConsumed || 0,
-          };
-          
-          const updatedUser = {
-            ...user,
-            profile: updatedProfile,
-          };
-          
-          const updatedUsers = registeredUsers.map(u => 
-            u.id === user.id ? updatedUser : u
-          );
-          
-          set({
-            user: updatedUser,
-            registeredUsers: updatedUsers
-          });
+      register: (email, password, name) => {
+        const { users } = get();
+        if (users.some(u => u.email === email)) {
+          return false;
         }
+        
+        const newUser = {
+          id: Date.now(),
+          email,
+          password,
+          name
+        };
+        
+        set({ users: [...users, newUser] });
+        return true;
       },
 
-      updateWaterConsumption: (amount: number) => {
-        const { user, registeredUsers } = get();
-        if (user?.profile) {
-          const currentWater = user.profile.waterConsumed || 0;
-          const newWater = Math.max(0, currentWater + amount);
-          
-          const updatedProfile = {
-            ...user.profile,
-            waterConsumed: newWater,
-          };
-          
-          const updatedUser = {
-            ...user,
-            profile: updatedProfile,
-          };
-          
-          const updatedUsers = registeredUsers.map(u => 
-            u.id === user.id ? updatedUser : u
-          );
-          
-          set({
-            user: updatedUser,
-            registeredUsers: updatedUsers
-          });
-        }
+      updateProfile: (profile) => {
+        const { user, users } = get();
+        if (!user) return;
+
+        const dailyWaterGoal = calculateDailyWaterGoal(profile.weight, profile.height);
+        const updatedProfile = {
+          ...profile,
+          dailyWaterGoal,
+          waterConsumed: user.profile?.waterConsumed || 0
+        };
+
+        const updatedUser = { ...user, profile: updatedProfile };
+        const updatedUsers = users.map(u => 
+          u.id === user.id ? { ...u, profile: updatedProfile } : u
+        );
+
+        set({ 
+          user: updatedUser,
+          users: updatedUsers
+        });
+      },
+
+      updateWaterConsumption: (amount) => {
+        const { user, users } = get();
+        if (!user?.profile) return;
+
+        const currentWater = user.profile.waterConsumed || 0;
+        const newWaterAmount = Math.max(0, currentWater + amount);
+        
+        const updatedProfile = {
+          ...user.profile,
+          waterConsumed: newWaterAmount
+        };
+
+        const updatedUser = { ...user, profile: updatedProfile };
+        const updatedUsers = users.map(u => 
+          u.id === user.id ? { ...u, profile: updatedProfile } : u
+        );
+
+        set({ 
+          user: updatedUser,
+          users: updatedUsers
+        });
       },
 
       resetDailyWater: () => {
-        const { user, registeredUsers } = get();
-        if (user?.profile) {
-          const updatedProfile = {
-            ...user.profile,
-            waterConsumed: 0,
-          };
-          
-          const updatedUser = {
-            ...user,
-            profile: updatedProfile,
-          };
-          
-          const updatedUsers = registeredUsers.map(u => 
-            u.id === user.id ? updatedUser : u
-          );
-          
-          set({
-            user: updatedUser,
-            registeredUsers: updatedUsers
-          });
-        }
-      },
+        const { user, users } = get();
+        if (!user?.profile) return;
 
-      resetPassword: async (email: string, newPassword: string) => {
-        const { registeredUsers } = get();
-        
-        const userIndex = registeredUsers.findIndex(u => 
-          u.email.toLowerCase().trim() === email.toLowerCase().trim()
+        const updatedProfile = {
+          ...user.profile,
+          waterConsumed: 0
+        };
+
+        const updatedUser = { ...user, profile: updatedProfile };
+        const updatedUsers = users.map(u => 
+          u.id === user.id ? { ...u, profile: updatedProfile } : u
         );
-        
-        if (userIndex !== -1) {
-          const updatedUsers = [...registeredUsers];
-          updatedUsers[userIndex] = {
-            ...updatedUsers[userIndex],
-            password: newPassword.trim()
-          };
-          
-          set({ registeredUsers: updatedUsers });
-          return true;
-        }
-        
-        return false;
+
+        set({ 
+          user: updatedUser,
+          users: updatedUsers
+        });
       },
 
-      findUserByEmail: (email: string) => {
-        const { registeredUsers } = get();
-        return registeredUsers.find(u => 
-          u.email.toLowerCase().trim() === email.toLowerCase().trim()
-        ) || null;
+      resetPassword: (email, newPassword) => {
+        const { users } = get();
+        const userIndex = users.findIndex(u => u.email === email);
+        
+        if (userIndex === -1) return false;
+        
+        const updatedUsers = [...users];
+        updatedUsers[userIndex] = { ...updatedUsers[userIndex], password: newPassword };
+        
+        set({ users: updatedUsers });
+        return true;
       },
     }),
     {
