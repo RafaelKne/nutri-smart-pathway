@@ -23,7 +23,9 @@ export const useMealStore = create<MealState>()(
       },
 
       generateNewPlan: (dietaryPreferences?: string[], userProfile?: any) => {
+        console.log('Generating new plan with profile:', userProfile);
         const newMeals = generateNewMealPlan(dietaryPreferences, userProfile);
+        console.log('Generated meals:', newMeals.length);
         set({ meals: newMeals, consumedMeals: [] });
       },
 
