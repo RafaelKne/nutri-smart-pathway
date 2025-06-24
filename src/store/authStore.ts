@@ -73,19 +73,27 @@ export const useAuthStore = create<AuthState>()(
     (set, get) => ({
       user: null,
       isAuthenticated: false,
-      registeredUsers: [adminUser], // Sempre incluir a conta admin
+      registeredUsers: [adminUser],
 
       login: async (email: string, password: string) => {
         console.log('Tentando login com:', { email, password });
         const { registeredUsers } = get();
         
-        // Log para debug
         console.log('Usuários registrados:', registeredUsers);
         
-        // Procurar usuário registrado e validar email e senha
+        // Procurar usuário registrado com comparação mais robusta
         const existingUser = registeredUsers.find(u => {
-          console.log('Comparando com usuário:', u.email, u.password);
-          return u.email.toLowerCase() === email.toLowerCase() && u.password === password;
+          const emailMatch = u.email.toLowerCase().trim() === email.toLowerCase().trim();
+          const passwordMatch = u.password.trim() === password.trim();
+          console.log('Comparando:', { 
+            userEmail: u.email, 
+            inputEmail: email, 
+            emailMatch,
+            userPassword: u.password,
+            inputPassword: password,
+            passwordMatch 
+          });
+          return emailMatch && passwordMatch;
         });
         
         console.log('Usuário encontrado:', existingUser);
@@ -96,15 +104,17 @@ export const useAuthStore = create<AuthState>()(
           return true;
         }
         
-        console.log('Falha no login');
+        console.log('Falha no login - usuário não encontrado ou credenciais inválidas');
         return false;
       },
 
       register: async (name: string, email: string, password: string) => {
         const { registeredUsers } = get();
         
-        // Verificar se usuário já existe
-        const existingUser = registeredUsers.find(u => u.email.toLowerCase() === email.toLowerCase());
+        // Verificar se usuário já existe com comparação mais robusta
+        const existingUser = registeredUsers.find(u => 
+          u.email.toLowerCase().trim() === email.toLowerCase().trim()
+        );
         if (existingUser) {
           return false;
         }
@@ -112,9 +122,9 @@ export const useAuthStore = create<AuthState>()(
         if (name && email && password) {
           const newUser: User = {
             id: Date.now().toString(),
-            name,
-            email,
-            password,
+            name: name.trim(),
+            email: email.trim(),
+            password: password.trim(),
             isPremium: false,
             isAdmin: false,
           };

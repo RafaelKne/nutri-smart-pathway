@@ -1,9 +1,9 @@
-
 import { Meal } from "@/types/meal";
 import { defaultMeals } from "@/data/defaultMeals";
 import { alternativeMeals } from "@/data/alternativeMeals";
 import { basicMeals } from "@/data/basicMeals";
 import { vegetarianMeals, veganMeals } from "@/data/vegetarianMeals";
+import { extraMeals } from "@/data/extraMeals";
 
 // Função para calcular TMB (Taxa Metabólica Basal)
 const calculateBMR = (weight: number, height: number, age: number, gender: string): number => {
@@ -91,8 +91,9 @@ export const getMealsByType = (mealType: string, dietaryPreferences: string[] = 
     const defaults = defaultMeals.filter(meal => meal.name === mealType);
     const alternatives = alternativeMeals.filter(meal => meal.name === mealType);
     const basics = basicMeals.filter(meal => meal.name === mealType);
-    availableMeals = [...defaults, ...alternatives, ...basics];
-    console.log('Using ONLY regular meals (with meat):', availableMeals.length);
+    const extras = extraMeals.filter(meal => meal.name === mealType);
+    availableMeals = [...defaults, ...alternatives, ...basics, ...extras];
+    console.log('Using ALL regular meals (with meat):', availableMeals.length);
   }
 
   return availableMeals;
@@ -147,17 +148,10 @@ const adjustMealNutrition = (meal: Meal, userProfile: any, mealIndex: number, to
 };
 
 export const generateNewMealPlan = (dietaryPreferences: string[] = [], userProfile?: any): Meal[] => {
-  const mealsPerDay = userProfile?.mealsPerDay || 4;
+  // Sempre usar 4 refeições por padrão
+  const mealsPerDay = 4;
   
-  let mealTypes: string[] = [];
-  
-  if (mealsPerDay === 3) {
-    mealTypes = ["Café da Manhã", "Almoço", "Jantar"];
-  } else if (mealsPerDay === 4) {
-    mealTypes = ["Café da Manhã", "Almoço", "Lanche da Tarde", "Jantar"];
-  } else {
-    mealTypes = ["Café da Manhã", "Lanche da Manhã", "Almoço", "Lanche da Tarde", "Jantar"];
-  }
+  const mealTypes: string[] = ["Café da Manhã", "Almoço", "Lanche da Tarde", "Jantar"];
   
   return mealTypes.map((type, index) => {
     const availableMeals = getMealsByType(type, dietaryPreferences);
