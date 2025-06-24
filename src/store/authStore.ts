@@ -1,4 +1,3 @@
-
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
@@ -36,6 +35,8 @@ interface AuthState {
   updateProfile: (profile: UserProfile) => void;
   updateWaterConsumption: (amount: number) => void;
   resetDailyWater: () => void;
+  resetPassword: (email: string, newPassword: string) => Promise<boolean>;
+  findUserByEmail: (email: string) => User | null;
 }
 
 // Função para calcular necessidade diária de água (ml)
@@ -45,7 +46,7 @@ const calculateDailyWater = (weight: number, height: number): number => {
   return Math.round(baseWater + heightAdjustment);
 };
 
-// Conta de administrador padrão
+// Conta de administrador padrão resetada
 const adminUser: User = {
   id: 'admin-001',
   name: 'Administrador',
@@ -73,7 +74,7 @@ export const useAuthStore = create<AuthState>()(
     (set, get) => ({
       user: null,
       isAuthenticated: false,
-      registeredUsers: [adminUser],
+      registeredUsers: [adminUser], // Apenas administrador resetado
 
       login: async (email: string, password: string) => {
         console.log('Tentando login com:', { email, password });
@@ -81,10 +82,8 @@ export const useAuthStore = create<AuthState>()(
         
         console.log('Usuários registrados:', registeredUsers);
         
-        // Procurar usuário registrado com comparação mais robusta
         const existingUser = registeredUsers.find(u => {
           const emailMatch = u.email.toLowerCase().trim() === email.toLowerCase().trim();
-          // Verificar se o usuário tem senha definida
           const userPassword = u.password || '';
           const passwordMatch = userPassword.trim() === password.trim();
           console.log('Comparando:', { 
@@ -102,7 +101,6 @@ export const useAuthStore = create<AuthState>()(
         console.log('Usuário encontrado:', existingUser);
         
         if (existingUser) {
-          // Se o usuário não tem senha, definir uma senha padrão
           if (!existingUser.password) {
             existingUser.password = password;
             const updatedUsers = registeredUsers.map(u => 
@@ -123,7 +121,6 @@ export const useAuthStore = create<AuthState>()(
       register: async (name: string, email: string, password: string) => {
         const { registeredUsers } = get();
         
-        // Verificar se usuário já existe com comparação mais robusta
         const existingUser = registeredUsers.find(u => 
           u.email.toLowerCase().trim() === email.toLowerCase().trim()
         );
@@ -234,6 +231,34 @@ export const useAuthStore = create<AuthState>()(
             registeredUsers: updatedUsers
           });
         }
+      },
+
+      resetPassword: async (email: string, newPassword: string) => {
+        const { registeredUsers } = get();
+        
+        const userIndex = registeredUsers.findIndex(u => 
+          u.email.toLowerCase().trim() === email.toLowerCase().trim()
+        );
+        
+        if (userIndex !== -1) {
+          const updatedUsers = [...registeredUsers];
+          updatedUsers[userIndex] = {
+            ...updatedUsers[userIndex],
+            password: newPassword.trim()
+          };
+          
+          set({ registeredUsers: updatedUsers });
+          return true;
+        }
+        
+        return false;
+      },
+
+      findUserByEmail: (email: string) => {
+        const { registeredUsers } = get();
+        return registeredUsers.find(u => 
+          u.email.toLowerCase().trim() === email.toLowerCase().trim()
+        ) || null;
       },
     }),
     {
