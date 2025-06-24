@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -73,7 +72,7 @@ const MealCard = ({ meal, onMarkConsumed, onSubstitute }) => {
             Ingredientes:
           </h4>
           <div className="grid grid-cols-2 gap-1 text-sm">
-            {meal.ingredients && meal.ingredients.length > 0 && meal.ingredients.map((ingredient, index) => (
+            {meal.ingredients.map((ingredient, index) => (
               <div key={index} className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
                 <span>{ingredient}</span>
@@ -86,7 +85,7 @@ const MealCard = ({ meal, onMarkConsumed, onSubstitute }) => {
         <div className="space-y-2">
           <h4 className="font-semibold">Modo de preparo:</h4>
           <ol className="text-sm space-y-1">
-            {meal.instructions && meal.instructions.length > 0 && meal.instructions.map((instruction, index) => (
+            {meal.instructions.map((instruction, index) => (
               <li key={index} className="flex gap-2">
                 <span className="bg-green-100 text-green-800 rounded-full w-5 h-5 text-xs flex items-center justify-center font-medium">
                   {index + 1}
@@ -184,7 +183,7 @@ export const MealPlan = () => {
       </div>
 
       <div className="grid gap-6">
-        {meals && meals.length > 0 && meals.map((meal) => (
+        {meals.map((meal) => (
           <MealCard
             key={meal.id}
             meal={meal}
