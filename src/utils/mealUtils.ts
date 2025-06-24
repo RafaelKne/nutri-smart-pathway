@@ -1,3 +1,4 @@
+
 import { Meal } from "@/types/meal";
 import { defaultMeals } from "@/data/defaultMeals";
 import { alternativeMeals } from "@/data/alternativeMeals";
@@ -148,10 +149,21 @@ const adjustMealNutrition = (meal: Meal, userProfile: any, mealIndex: number, to
 };
 
 export const generateNewMealPlan = (dietaryPreferences: string[] = [], userProfile?: any): Meal[] => {
-  // Sempre usar 4 refeições por padrão
-  const mealsPerDay = 4;
+  // Usar o número de refeições do perfil do usuário, com fallback para 4
+  const mealsPerDay = userProfile?.mealsPerDay || 4;
   
-  const mealTypes: string[] = ["Café da Manhã", "Almoço", "Lanche da Tarde", "Jantar"];
+  console.log('Gerando plano com', mealsPerDay, 'refeições');
+  
+  // Definir tipos de refeição baseado no número escolhido
+  let mealTypes: string[] = [];
+  
+  if (mealsPerDay === 3) {
+    mealTypes = ["Café da Manhã", "Almoço", "Jantar"];
+  } else if (mealsPerDay === 4) {
+    mealTypes = ["Café da Manhã", "Almoço", "Lanche da Tarde", "Jantar"];
+  } else if (mealsPerDay === 5) {
+    mealTypes = ["Café da Manhã", "Lanche da Manhã", "Almoço", "Lanche da Tarde", "Jantar"];
+  }
   
   return mealTypes.map((type, index) => {
     const availableMeals = getMealsByType(type, dietaryPreferences);

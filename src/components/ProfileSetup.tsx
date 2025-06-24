@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -64,7 +63,7 @@ export const ProfileSetup = () => {
   const onSubmit = (data: ProfileFormData) => {
     const profileData: UserProfile = {
       ...data,
-      mealsPerDay: 4, // Sempre 4 refeições
+      mealsPerDay: data.mealsPerDay, // Usar o valor escolhido pelo usuário
       dailyWaterGoal: 0,
       waterConsumed: 0,
     };

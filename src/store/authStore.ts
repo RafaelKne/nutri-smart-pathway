@@ -84,14 +84,17 @@ export const useAuthStore = create<AuthState>()(
         // Procurar usuário registrado com comparação mais robusta
         const existingUser = registeredUsers.find(u => {
           const emailMatch = u.email.toLowerCase().trim() === email.toLowerCase().trim();
-          const passwordMatch = u.password.trim() === password.trim();
+          // Verificar se o usuário tem senha definida
+          const userPassword = u.password || '';
+          const passwordMatch = userPassword.trim() === password.trim();
           console.log('Comparando:', { 
             userEmail: u.email, 
             inputEmail: email, 
             emailMatch,
-            userPassword: u.password,
+            userPassword: userPassword,
             inputPassword: password,
-            passwordMatch 
+            passwordMatch,
+            hasPassword: !!u.password
           });
           return emailMatch && passwordMatch;
         });
@@ -99,6 +102,15 @@ export const useAuthStore = create<AuthState>()(
         console.log('Usuário encontrado:', existingUser);
         
         if (existingUser) {
+          // Se o usuário não tem senha, definir uma senha padrão
+          if (!existingUser.password) {
+            existingUser.password = password;
+            const updatedUsers = registeredUsers.map(u => 
+              u.id === existingUser.id ? existingUser : u
+            );
+            set({ registeredUsers: updatedUsers });
+          }
+          
           set({ user: existingUser, isAuthenticated: true });
           console.log('Login realizado com sucesso');
           return true;
