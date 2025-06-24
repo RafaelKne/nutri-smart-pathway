@@ -1,14 +1,10 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Apple, Salad, Utensils, Target, TrendingUp, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
 const Welcome = () => {
   const navigate = useNavigate();
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-emerald-50">
+  return <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-emerald-50">
       {/* Background decorativo */}
       <div className="absolute inset-0">
         <div className="absolute top-20 left-20 w-32 h-32 bg-green-200/30 rounded-full blur-xl animate-pulse"></div>
@@ -22,9 +18,7 @@ const Welcome = () => {
           <div className="mx-auto w-20 h-20 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full flex items-center justify-center shadow-lg mb-6">
             <Utensils className="w-10 h-10 text-white" />
           </div>
-          <h1 className="text-5xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent mb-4">
-            NutriSmart
-          </h1>
+          <h1 className="text-5xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent mb-4">NutriPlan</h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             Sua jornada para uma alimentação equilibrada e saudável começa aqui. 
             Planeje suas refeições, acompanhe sua nutrição e alcance seus objetivos.
@@ -81,9 +75,7 @@ const Welcome = () => {
 
         {/* Benefits */}
         <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-8 mb-16">
-          <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">
-            Por que escolher o NutriSmart?
-          </h2>
+          <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">Por que escolher o NutriPlan?</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="flex items-start gap-4">
               <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
@@ -126,11 +118,7 @@ const Welcome = () => {
 
         {/* CTA */}
         <div className="text-center">
-          <Button 
-            size="lg" 
-            className="health-gradient text-white font-semibold px-12 py-4 text-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]"
-            onClick={() => navigate('/app')}
-          >
+          <Button size="lg" className="health-gradient text-white font-semibold px-12 py-4 text-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]" onClick={() => navigate('/app')}>
             Começar Agora
           </Button>
           <p className="text-gray-500 mt-4">
@@ -138,8 +126,6 @@ const Welcome = () => {
           </p>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Welcome;
