@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,6 +6,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useAuthStore } from "@/store/authStore";
+import { useMealStore } from "@/store/mealStore";
 import { useToast } from "@/hooks/use-toast";
 import { Header } from "@/components/Header";
 import { ChevronLeft } from "lucide-react";
@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 
 const Settings = () => {
   const { user, updateProfile } = useAuthStore();
+  const { generateNewPlan } = useMealStore();
   const { toast } = useToast();
   const navigate = useNavigate();
   
@@ -61,9 +62,13 @@ const Settings = () => {
     };
 
     updateProfile(profileData);
+    
+    // Regenerar o plano de refeições com as novas configurações
+    generateNewPlan(profile.dietaryPreferences, profileData);
+    
     toast({
       title: "Configurações salvas!",
-      description: "Suas preferências foram atualizadas com sucesso.",
+      description: "Suas preferências foram atualizadas e um novo plano foi gerado.",
     });
   };
 
@@ -76,7 +81,7 @@ const Settings = () => {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => navigate('/')}
+              onClick={() => navigate('/app')}
               className="border-green-500 text-green-600 hover:bg-green-50"
             >
               <ChevronLeft className="h-4 w-4 mr-2" />
