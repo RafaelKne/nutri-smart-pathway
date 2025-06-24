@@ -12,7 +12,7 @@ interface User {
   profile?: UserProfile;
 }
 
-interface UserProfile {
+export interface UserProfile {
   weight: number;
   height: number;
   age: number;
