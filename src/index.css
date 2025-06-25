@@ -45,24 +45,32 @@
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
+    --background: 220 13% 12%;
     --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
+    
+    --card: 220 13% 15%;
     --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
+    
+    --popover: 220 13% 15%;
     --popover-foreground: 210 40% 98%;
+    
     --primary: 142 76% 36%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
+    --primary-foreground: 355.7 100% 97.3%;
+    
+    --secondary: 220 13% 20%;
     --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
+    
+    --muted: 220 13% 20%;
     --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
+    
+    --accent: 220 13% 20%;
     --accent-foreground: 210 40% 98%;
+    
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
+    
+    --border: 220 13% 25%;
+    --input: 220 13% 25%;
     --ring: 212.7 26.8% 83.9%;
   }
 }
@@ -72,7 +80,7 @@
     @apply border-border;
   }
   body {
-    @apply bg-gradient-to-br from-green-50 via-blue-50 to-emerald-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 text-foreground min-h-screen transition-colors;
+    @apply bg-gradient-to-br from-green-50 via-blue-50 to-emerald-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 text-foreground min-h-screen transition-colors;
   }
 }
 
@@ -86,7 +94,20 @@
   }
   
   .glass-effect {
-    @apply bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-white/20 dark:border-gray-700/20;
+    @apply bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border border-white/20 dark:border-gray-600/40;
+  }
+
+  /* Melhorar contraste de texto no modo dark */
+  .dark .text-gray-600 {
+    @apply text-gray-300;
+  }
+  
+  .dark .text-gray-500 {
+    @apply text-gray-400;
+  }
+
+  .dark .text-gray-700 {
+    @apply text-gray-200;
   }
 
   /* Animações suaves */

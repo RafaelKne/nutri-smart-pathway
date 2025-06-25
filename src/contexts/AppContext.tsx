@@ -67,21 +67,33 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [theme, setTheme] = useState<Theme>('light');
   const [language, setLanguage] = useState<Language>('pt');
 
+  // Carregar configurações salvas
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') as Theme;
-    const savedLanguage = localStorage.getItem('language') as Language;
+    const savedTheme = localStorage.getItem('nutri-theme') as Theme;
+    const savedLanguage = localStorage.getItem('nutri-language') as Language;
     
-    if (savedTheme) setTheme(savedTheme);
-    if (savedLanguage) setLanguage(savedLanguage);
+    if (savedTheme && (savedTheme === 'light' || savedTheme === 'dark')) {
+      setTheme(savedTheme);
+    }
+    if (savedLanguage && (savedLanguage === 'pt' || savedLanguage === 'en')) {
+      setLanguage(savedLanguage);
+    }
   }, []);
 
+  // Aplicar tema
   useEffect(() => {
-    document.documentElement.classList.toggle('dark', theme === 'dark');
-    localStorage.setItem('theme', theme);
+    const root = document.documentElement;
+    if (theme === 'dark') {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+    }
+    localStorage.setItem('nutri-theme', theme);
   }, [theme]);
 
+  // Salvar idioma
   useEffect(() => {
-    localStorage.setItem('language', language);
+    localStorage.setItem('nutri-language', language);
   }, [language]);
 
   const toggleTheme = () => {
@@ -93,7 +105,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const t = (key: string) => {
-    return translations[language][key] || key;
+    return translations[language][key as keyof typeof translations['pt']] || key;
   };
 
   return (

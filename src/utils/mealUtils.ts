@@ -1,10 +1,38 @@
-
 import { Meal } from "@/types/meal";
 import { defaultMeals } from "@/data/defaultMeals";
 import { alternativeMeals } from "@/data/alternativeMeals";
 import { basicMeals } from "@/data/basicMeals";
 import { vegetarianMeals, veganMeals } from "@/data/vegetarianMeals";
 import { extraMeals } from "@/data/extraMeals";
+
+// Função para validar se uma refeição tem conteúdo válido
+const isValidMeal = (meal: Meal): boolean => {
+  // Verifica se tem título e não é apenas pontos ou espaços
+  if (!meal.title || meal.title.trim() === '' || meal.title.trim() === '.') {
+    return false;
+  }
+  
+  // Verifica se tem ingredientes válidos
+  const hasValidIngredients = meal.ingredients && 
+    meal.ingredients.some(ingredient => 
+      ingredient && 
+      ingredient.trim() !== '' && 
+      ingredient.trim() !== '.' &&
+      ingredient.length > 1
+    );
+  
+  // Verifica se tem instruções válidas
+  const hasValidInstructions = meal.instructions && 
+    meal.instructions.some(instruction => 
+      instruction && 
+      instruction.trim() !== '' && 
+      instruction.trim() !== '.' &&
+      instruction.length > 1
+    );
+  
+  // A refeição deve ter pelo menos ingredientes OU instruções válidos
+  return hasValidIngredients || hasValidInstructions;
+};
 
 // Função para calcular TMB (Taxa Metabólica Basal)
 const calculateBMR = (weight: number, height: number, age: number, gender: string): number => {
@@ -20,7 +48,6 @@ const calculateBMR = (weight: number, height: number, age: number, gender: strin
   }
 };
 
-// Função para calcular TDEE (Total Daily Energy Expenditure)
 const calculateTDEE = (bmr: number, activityLevel: string): number => {
   const validBmr = isNaN(bmr) || bmr <= 0 ? 1500 : bmr;
   const activityMultipliers = {
@@ -97,14 +124,36 @@ export const getMealsByType = (mealType: string, dietaryPreferences: string[] = 
     console.log('Using ALL regular meals (with meat):', availableMeals.length);
   }
 
-  return availableMeals;
+  // Filtrar apenas refeições válidas
+  const validMeals = availableMeals.filter(isValidMeal);
+  console.log('Valid meals after filtering:', validMeals.length);
+  
+  return validMeals;
 };
 
 export const getRandomMeal = (meals: Meal[]): Meal => {
+  if (meals.length === 0) {
+    // Retornar uma refeição padrão se não houver opções válidas
+    return {
+      id: Date.now(),
+      name: "Refeição",
+      time: "12:00",
+      title: "Refeição Simples",
+      calories: 300,
+      protein: 20,
+      carbs: 30,
+      fat: 10,
+      prepTime: "15 min",
+      servings: 1,
+      ingredients: ["Ingredientes não disponíveis"],
+      instructions: ["Preparar conforme preferência"],
+      consumed: false
+    };
+  }
+  
   return meals[Math.floor(Math.random() * meals.length)];
 };
 
-// Função para ajustar valores nutricionais baseado no perfil
 const adjustMealNutrition = (meal: Meal, userProfile: any, mealIndex: number, totalMeals: number) => {
   if (!userProfile || !userProfile.weight || !userProfile.height || !userProfile.age) {
     // Se não tiver perfil completo, usar valores padrão da refeição
