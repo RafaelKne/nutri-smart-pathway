@@ -1,15 +1,14 @@
-
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-interface User {
+export interface User {
   id: number;
   name: string;
   email: string;
   profile?: UserProfile;
 }
 
-interface UserProfile {
+export interface UserProfile {
   weight: number;
   height: number;
   age: number;
@@ -34,6 +33,7 @@ interface AuthState {
   updateWaterConsumption: (amount: number) => void;
   resetDailyWater: () => void;
   resetPassword: (email: string, newPassword: string) => boolean;
+  findUserByEmail: (email: string) => { email: string; password: string; name: string; id: number; profile?: UserProfile } | undefined;
 }
 
 const calculateDailyWaterGoal = (weight: number, height: number): number => {
@@ -195,6 +195,11 @@ export const useAuthStore = create<AuthState>()(
         
         set({ users: updatedUsers });
         return true;
+      },
+
+      findUserByEmail: (email) => {
+        const { users } = get();
+        return users.find(u => u.email === email);
       },
     }),
     {
