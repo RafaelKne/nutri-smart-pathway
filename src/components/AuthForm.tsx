@@ -7,12 +7,12 @@ import { useAuthStore } from "@/store/authStore";
 import { useToast } from "@/hooks/use-toast";
 import { Apple, Salad, Utensils } from "lucide-react";
 import { Link } from "react-router-dom";
+
 interface AuthFormProps {
   onSuccess?: () => void;
 }
-export const AuthForm = ({
-  onSuccess
-}: AuthFormProps) => {
+
+export const AuthForm = ({ onSuccess }: AuthFormProps) => {
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
     name: '',
@@ -20,45 +20,53 @@ export const AuthForm = ({
     password: ''
   });
   const [loading, setLoading] = useState(false);
-  const {
-    login,
-    register
-  } = useAuthStore();
-  const {
-    toast
-  } = useToast();
+  const { login, register } = useAuthStore();
+  const { toast } = useToast();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    
     try {
       let success = false;
+      
       if (isLogin) {
-        success = await login(formData.email, formData.password);
+        success = login(formData.email, formData.password);
         if (!success) {
           toast({
             title: "Erro no login",
             description: "E-mail ou senha incorretos. Verifique seus dados ou crie uma conta.",
             variant: "destructive"
           });
+        } else {
+          toast({
+            title: "Login realizado!",
+            description: "Bem-vindo de volta!"
+          });
+          onSuccess?.();
         }
       } else {
-        success = await register(formData.name, formData.email, formData.password);
+        success = register(formData.email, formData.password, formData.name);
         if (!success) {
           toast({
             title: "Erro no cadastro",
             description: "Este e-mail já está cadastrado. Tente fazer login.",
             variant: "destructive"
           });
+        } else {
+          // Após criar a conta, fazer login automaticamente
+          const loginSuccess = login(formData.email, formData.password);
+          if (loginSuccess) {
+            toast({
+              title: "Conta criada!",
+              description: "Sua conta foi criada com sucesso! Agora configure seu perfil."
+            });
+            onSuccess?.();
+          }
         }
       }
-      if (success) {
-        toast({
-          title: isLogin ? "Login realizado!" : "Conta criada!",
-          description: isLogin ? "Bem-vindo de volta!" : "Sua conta foi criada com sucesso!"
-        });
-        onSuccess?.();
-      }
     } catch (error) {
+      console.error('Auth error:', error);
       toast({
         title: "Erro",
         description: "Ocorreu um erro. Tente novamente.",
@@ -68,7 +76,10 @@ export const AuthForm = ({
       setLoading(false);
     }
   };
-  return <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+
+  return (
+    
+    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
       {/* Enhanced background with more visual elements */}
       <div className="absolute inset-0 bg-gradient-to-br from-green-50 via-blue-50 to-emerald-50">
         {/* Animated background shapes */}
@@ -120,46 +131,77 @@ export const AuthForm = ({
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
-            {!isLogin && <div className="space-y-2">
+            {!isLogin && (
+              <div className="space-y-2">
                 <Label htmlFor="name" className="text-gray-700 font-medium">Nome</Label>
-                <Input id="name" type="text" placeholder="Seu nome completo" value={formData.name} onChange={e => setFormData({
-              ...formData,
-              name: e.target.value
-            })} required={!isLogin} className="border-gray-200 focus:border-green-500 focus:ring-green-500 transition-colors" />
-              </div>}
+                <Input 
+                  id="name" 
+                  type="text" 
+                  placeholder="Seu nome completo" 
+                  value={formData.name} 
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })} 
+                  required={!isLogin} 
+                  className="border-gray-200 focus:border-green-500 focus:ring-green-500 transition-colors" 
+                />
+              </div>
+            )}
             
             <div className="space-y-2">
               <Label htmlFor="email" className="text-gray-700 font-medium">E-mail</Label>
-              <Input id="email" type="email" placeholder="seu@email.com" value={formData.email} onChange={e => setFormData({
-              ...formData,
-              email: e.target.value
-            })} required className="border-gray-200 focus:border-green-500 focus:ring-green-500 transition-colors" />
+              <Input 
+                id="email" 
+                type="email" 
+                placeholder="seu@email.com" 
+                value={formData.email} 
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })} 
+                required 
+                className="border-gray-200 focus:border-green-500 focus:ring-green-500 transition-colors" 
+              />
             </div>
             
             <div className="space-y-2">
               <Label htmlFor="password" className="text-gray-700 font-medium">Senha</Label>
-              <Input id="password" type="password" placeholder="••••••••" value={formData.password} onChange={e => setFormData({
-              ...formData,
-              password: e.target.value
-            })} required className="border-gray-200 focus:border-green-500 focus:ring-green-500 transition-colors" />
+              <Input 
+                id="password" 
+                type="password" 
+                placeholder="••••••••" 
+                value={formData.password} 
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })} 
+                required 
+                className="border-gray-200 focus:border-green-500 focus:ring-green-500 transition-colors" 
+              />
             </div>
 
-            {isLogin && <div className="text-right">
+            {isLogin && (
+              <div className="text-right">
                 <Link to="/forgot-password" className="text-sm text-green-600 hover:text-green-700 transition-colors">
                   Esqueceu sua senha?
                 </Link>
-              </div>}
+              </div>
+            )}
 
-            <Button type="submit" className="w-full health-gradient text-white font-semibold py-3 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]" disabled={loading}>
-              {loading ? <div className="flex items-center gap-2">
+            <Button 
+              type="submit" 
+              className="w-full health-gradient text-white font-semibold py-3 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]" 
+              disabled={loading}
+            >
+              {loading ? (
+                <div className="flex items-center gap-2">
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                   Carregando...
-                </div> : isLogin ? 'Entrar' : 'Criar Conta'}
+                </div>
+              ) : (
+                isLogin ? 'Entrar' : 'Criar Conta'
+              )}
             </Button>
           </form>
 
           <div className="mt-6 text-center">
-            <Button variant="link" onClick={() => setIsLogin(!isLogin)} className="text-green-600 hover:text-green-700 font-medium transition-colors">
+            <Button 
+              variant="link" 
+              onClick={() => setIsLogin(!isLogin)} 
+              className="text-green-600 hover:text-green-700 font-medium transition-colors"
+            >
               {isLogin ? 'Não tem conta? Criar agora' : 'Já tem conta? Fazer login'}
             </Button>
           </div>
@@ -186,5 +228,6 @@ export const AuthForm = ({
           </div>
         </CardContent>
       </Card>
-    </div>;
+    </div>
+  );
 };

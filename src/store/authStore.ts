@@ -1,3 +1,4 @@
+
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
@@ -69,8 +70,12 @@ export const useAuthStore = create<AuthState>()(
       ],
 
       login: (email, password) => {
+        console.log('Tentando login com:', { email, password });
         const { users } = get();
+        console.log('Usuários disponíveis:', users);
+        
         const user = users.find(u => u.email === email && u.password === password);
+        console.log('Usuário encontrado:', user);
         
         if (user) {
           let userProfile = user.profile;
@@ -93,8 +98,10 @@ export const useAuthStore = create<AuthState>()(
             }, 
             isAuthenticated: true 
           });
+          console.log('Login bem-sucedido');
           return true;
         }
+        console.log('Login falhou');
         return false;
       },
 
@@ -103,8 +110,11 @@ export const useAuthStore = create<AuthState>()(
       },
 
       register: (email, password, name) => {
+        console.log('Tentando registrar:', { email, password, name });
         const { users } = get();
+        
         if (users.some(u => u.email === email)) {
+          console.log('Email já existe');
           return false;
         }
         
@@ -115,7 +125,10 @@ export const useAuthStore = create<AuthState>()(
           name
         };
         
-        set({ users: [...users, newUser] });
+        const updatedUsers = [...users, newUser];
+        set({ users: updatedUsers });
+        console.log('Usuário registrado com sucesso:', newUser);
+        console.log('Lista de usuários atualizada:', updatedUsers);
         return true;
       },
 
