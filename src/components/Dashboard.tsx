@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -7,11 +6,13 @@ import { useMealStore } from "@/store/mealStore";
 import { ProfileSetup } from "./ProfileSetup";
 import { MealPlan } from "./MealPlan";
 import { Calendar, User, TrendingUp, Target, Clock } from "lucide-react";
-
 export const Dashboard = () => {
-  const { user } = useAuthStore();
-  const { meals } = useMealStore();
-
+  const {
+    user
+  } = useAuthStore();
+  const {
+    meals
+  } = useMealStore();
   if (!user?.profile) {
     return <ProfileSetup />;
   }
@@ -23,14 +24,18 @@ export const Dashboard = () => {
     protein: acc.protein + (meal.protein || 0),
     carbs: acc.carbs + (meal.carbs || 0),
     fat: acc.fat + (meal.fat || 0)
-  }), { calories: 0, protein: 0, carbs: 0, fat: 0 });
+  }), {
+    calories: 0,
+    protein: 0,
+    carbs: 0,
+    fat: 0
+  });
 
   // Garantir que os valores não sejam NaN
   const safeCalories = isNaN(totalConsumed.calories) ? 0 : totalConsumed.calories;
   const safeProtein = isNaN(totalConsumed.protein) ? 0 : totalConsumed.protein;
   const safeCarbs = isNaN(totalConsumed.carbs) ? 0 : totalConsumed.carbs;
   const safeFat = isNaN(totalConsumed.fat) ? 0 : totalConsumed.fat;
-
   const todayProgress = {
     calories: {
       consumed: safeCalories,
@@ -51,13 +56,11 @@ export const Dashboard = () => {
   };
 
   // Calcular porcentagens de forma segura
-  const caloriesProgress = Math.min((todayProgress.calories.consumed / todayProgress.calories.target) * 100, 100);
-  const proteinProgress = Math.min((todayProgress.protein.consumed / todayProgress.protein.target) * 100, 100);
-  const carbsProgress = Math.min((todayProgress.carbs.consumed / todayProgress.carbs.target) * 100, 100);
-  const fatProgress = Math.min((todayProgress.fat.consumed / todayProgress.fat.target) * 100, 100);
-
-  return (
-    <div className="space-y-8">
+  const caloriesProgress = Math.min(todayProgress.calories.consumed / todayProgress.calories.target * 100, 100);
+  const proteinProgress = Math.min(todayProgress.protein.consumed / todayProgress.protein.target * 100, 100);
+  const carbsProgress = Math.min(todayProgress.carbs.consumed / todayProgress.carbs.target * 100, 100);
+  const fatProgress = Math.min(todayProgress.fat.consumed / todayProgress.fat.target * 100, 100);
+  return <div className="space-y-8 bg-slate-800">
       {/* Welcome Section */}
       <div className="bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl p-6 text-white">
         <h2 className="text-2xl font-bold mb-2">Olá, {user.name}! 👋</h2>
@@ -141,6 +144,5 @@ export const Dashboard = () => {
           
         </Card>
       </div>
-    </div>
-  );
+    </div>;
 };
