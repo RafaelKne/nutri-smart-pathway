@@ -8,13 +8,16 @@ import { useAuthStore } from "@/store/authStore";
 import { useToast } from "@/hooks/use-toast";
 import { WaterTracker } from "./WaterTracker";
 import { useNavigate } from "react-router-dom";
+import { useApp } from "@/contexts/AppContext";
 import React from "react";
 
 const MealCard = ({ meal, onMarkConsumed, onSubstitute }) => {
+  const { t } = useApp();
+
   return (
     <Card
       className={`glass-effect card-hover overflow-hidden transition-all ${
-        meal.consumed ? "bg-green-50 border-green-200" : ""
+        meal.consumed ? "bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-700" : ""
       }`}
     >
       <CardHeader className="pb-4">
@@ -24,15 +27,15 @@ const MealCard = ({ meal, onMarkConsumed, onSubstitute }) => {
               {meal.name} • {meal.time}
               {meal.consumed && <Check className="h-3 w-3 ml-1 text-green-600" />}
             </Badge>
-            <CardTitle className={`text-xl ${meal.consumed ? "text-green-700" : ""}`}>
+            <CardTitle className={`text-xl ${meal.consumed ? "text-green-700 dark:text-green-400" : ""}`}>
               {meal.title}
             </CardTitle>
           </div>
           <div className="text-right">
-            <div className={`text-2xl font-bold ${meal.consumed ? "text-green-700" : "text-green-600"}`}>
+            <div className={`text-2xl font-bold ${meal.consumed ? "text-green-700 dark:text-green-400" : "text-green-600"}`}>
               {meal.calories}
             </div>
-            <div className="text-sm text-gray-500">calorias</div>
+            <div className="text-sm text-gray-500 dark:text-gray-400">{t('calories')}</div>
           </div>
         </div>
       </CardHeader>
@@ -42,60 +45,64 @@ const MealCard = ({ meal, onMarkConsumed, onSubstitute }) => {
         <div className="flex gap-6 text-sm">
           <div className="flex items-center gap-1">
             <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-            <span>Proteína: {meal.protein}g</span>
+            <span>{t('protein')}: {meal.protein}g</span>
           </div>
           <div className="flex items-center gap-1">
             <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
-            <span>Carbs: {meal.carbs}g</span>
+            <span>{t('carbs')}: {meal.carbs}g</span>
           </div>
           <div className="flex items-center gap-1">
             <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
-            <span>Gordura: {meal.fat}g</span>
+            <span>{t('fat')}: {meal.fat}g</span>
           </div>
         </div>
 
         {/* Info */}
-        <div className="flex gap-4 text-sm text-gray-600">
+        <div className="flex gap-4 text-sm text-gray-600 dark:text-gray-400">
           <div className="flex items-center gap-1">
             <Clock className="h-4 w-4" />
             <span>{meal.prepTime}</span>
           </div>
           <div className="flex items-center gap-1">
             <Users className="h-4 w-4" />
-            <span>{meal.servings} porção</span>
+            <span>{meal.servings} {t('servings')}</span>
           </div>
         </div>
 
         {/* Ingredients */}
-        <div className="space-y-2">
-          <h4 className="font-semibold flex items-center gap-2">
-            <ChefHat className="h-4 w-4" />
-            Ingredientes:
-          </h4>
-          <div className="grid grid-cols-2 gap-1 text-sm">
-            {meal.ingredients && meal.ingredients.length > 0 && meal.ingredients.map((ingredient, index) => (
-              <div key={index} className="flex items-center gap-2">
-                <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
-                <span>{ingredient}</span>
-              </div>
-            ))}
+        {meal.ingredients && meal.ingredients.length > 0 && meal.ingredients.some(ingredient => ingredient && ingredient.trim() !== '' && ingredient !== '.') && (
+          <div className="space-y-2">
+            <h4 className="font-semibold flex items-center gap-2">
+              <ChefHat className="h-4 w-4" />
+              {t('ingredients')}
+            </h4>
+            <div className="grid grid-cols-2 gap-1 text-sm">
+              {meal.ingredients.filter(ingredient => ingredient && ingredient.trim() !== '' && ingredient !== '.').map((ingredient, index) => (
+                <div key={index} className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                  <span>{ingredient}</span>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Instructions */}
-        <div className="space-y-2">
-          <h4 className="font-semibold">Modo de preparo:</h4>
-          <ol className="text-sm space-y-1">
-            {meal.instructions && meal.instructions.length > 0 && meal.instructions.map((instruction, index) => (
-              <li key={index} className="flex gap-2">
-                <span className="bg-green-100 text-green-800 rounded-full w-5 h-5 text-xs flex items-center justify-center font-medium">
-                  {index + 1}
-                </span>
-                <span>{instruction}</span>
-              </li>
-            ))}
-          </ol>
-        </div>
+        {meal.instructions && meal.instructions.length > 0 && meal.instructions.some(instruction => instruction && instruction.trim() !== '' && instruction !== '.') && (
+          <div className="space-y-2">
+            <h4 className="font-semibold">{t('instructions')}</h4>
+            <ol className="text-sm space-y-1">
+              {meal.instructions.filter(instruction => instruction && instruction.trim() !== '' && instruction !== '.').map((instruction, index) => (
+                <li key={index} className="flex gap-2">
+                  <span className="bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-200 rounded-full w-5 h-5 text-xs flex items-center justify-center font-medium">
+                    {index + 1}
+                  </span>
+                  <span>{instruction}</span>
+                </li>
+              ))}
+            </ol>
+          </div>
+        )}
 
         <div className="flex gap-2 pt-2">
           <Button
@@ -106,14 +113,14 @@ const MealCard = ({ meal, onMarkConsumed, onSubstitute }) => {
             {meal.consumed ? (
               <>
                 <Check className="h-4 w-4 mr-1" />
-                Consumido
+                {t('consumed')}
               </>
             ) : (
-              "Marcar como Consumido"
+              t('markAsConsumed')
             )}
           </Button>
           <Button size="sm" variant="outline" onClick={() => onSubstitute(meal.id)}>
-            Substituir Refeição
+            {t('substituteMeal')}
           </Button>
         </div>
       </CardContent>
@@ -126,6 +133,7 @@ export const MealPlan = () => {
   const { user } = useAuthStore();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { t } = useApp();
 
   const userDietaryPreferences = user?.profile?.dietaryPreferences || [];
   const userProfile = user?.profile;
@@ -161,7 +169,7 @@ export const MealPlan = () => {
 
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-2xl font-bold">Seu Plano de Hoje</h3>
+          <h3 className="text-2xl font-bold">{t('mealPlan')}</h3>
           {userDietaryPreferences.length > 0 && (
             <div className="flex gap-2 mt-2">
               {userDietaryPreferences.map((pref) => (
@@ -175,10 +183,10 @@ export const MealPlan = () => {
         <div className="flex gap-2">
           <Button
             variant="outline"
-            className="border-green-500 text-green-600 hover:bg-green-50"
+            className="border-green-500 text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20"
             onClick={handleGenerateNewPlan}
           >
-            Gerar Novo Plano
+            {t('generateNewPlan')}
           </Button>
         </div>
       </div>
