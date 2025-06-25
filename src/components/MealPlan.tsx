@@ -152,7 +152,7 @@ export const MealPlan = () => {
       {/* Water Tracker */}
       <WaterTracker />
 
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between bg-slate-50">
         <div>
           <h3 className="text-2xl font-bold text-zinc-950">{t('mealPlan')}</h3>
           {userDietaryPreferences.length > 0 && <div className="flex gap-2 mt-2">
