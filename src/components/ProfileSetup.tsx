@@ -97,6 +97,8 @@ export const ProfileSetup = () => {
   };
 
   const onSubmit = (data: ProfileFormData) => {
+    console.log('Submitting profile data:', data);
+    
     const profileData: UserProfile = {
       ...data,
       mealsPerDay: data.mealsPerDay,
@@ -104,7 +106,11 @@ export const ProfileSetup = () => {
       waterConsumed: 0,
     };
     
+    // Atualizar perfil primeiro
     updateProfile(profileData);
+    
+    // Gerar plano com os dados do perfil
+    console.log('Generating meal plan with profile:', profileData);
     generateNewPlan(data.dietaryPreferences, profileData);
     
     toast({

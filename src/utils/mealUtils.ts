@@ -1,3 +1,4 @@
+
 import { Meal } from "@/types/meal";
 import { defaultMeals } from "@/data/defaultMeals";
 import { alternativeMeals } from "@/data/alternativeMeals";
@@ -34,7 +35,7 @@ const isValidMeal = (meal: Meal): boolean => {
   return hasValidIngredients || hasValidInstructions;
 };
 
-// Função para calcular TMB (Taxa Metabólica Basal)
+// Função para calcular TMB (Taxa Metabólica Basal) usando a fórmula de Harris-Benedict
 const calculateBMR = (weight: number, height: number, age: number, gender: string): number => {
   // Garantir que todos os valores são números válidos
   const validWeight = isNaN(weight) || weight <= 0 ? 70 : weight;
@@ -48,6 +49,7 @@ const calculateBMR = (weight: number, height: number, age: number, gender: strin
   }
 };
 
+// Função para calcular TDEE (Total Daily Energy Expenditure)
 const calculateTDEE = (bmr: number, activityLevel: string): number => {
   const validBmr = isNaN(bmr) || bmr <= 0 ? 1500 : bmr;
   const activityMultipliers = {
@@ -64,7 +66,7 @@ const calculateDailyCalories = (tdee: number, goal: string): number => {
   const validTdee = isNaN(tdee) || tdee <= 0 ? 1800 : tdee;
   switch (goal) {
     case 'emagrecimento':
-      return Math.round(validTdee * 0.8); // Déficit de 20%
+      return Math.round(validTdee * 0.85); // Déficit de 15%
     case 'ganho_massa':
       return Math.round(validTdee * 1.15); // Superávit de 15%
     case 'manutencao':
@@ -73,7 +75,7 @@ const calculateDailyCalories = (tdee: number, goal: string): number => {
   }
 };
 
-// Função para calcular macronutrientes
+// Função para calcular macronutrientes baseados no objetivo
 const calculateMacros = (calories: number, goal: string) => {
   const validCalories = isNaN(calories) || calories <= 0 ? 1800 : calories;
   let proteinRatio = 0.25;
@@ -81,13 +83,13 @@ const calculateMacros = (calories: number, goal: string) => {
   let fatRatio = 0.30;
 
   if (goal === 'ganho_massa') {
-    proteinRatio = 0.30;
+    proteinRatio = 0.30; // Mais proteína para ganho de massa
     carbRatio = 0.40;
     fatRatio = 0.30;
   } else if (goal === 'emagrecimento') {
-    proteinRatio = 0.35;
-    carbRatio = 0.35;
-    fatRatio = 0.30;
+    proteinRatio = 0.35; // Mais proteína para preservar massa muscular
+    carbRatio = 0.30; // Menos carboidratos
+    fatRatio = 0.35;
   }
 
   return {
@@ -156,6 +158,7 @@ export const getRandomMeal = (meals: Meal[]): Meal => {
 
 const adjustMealNutrition = (meal: Meal, userProfile: any, mealIndex: number, totalMeals: number) => {
   if (!userProfile || !userProfile.weight || !userProfile.height || !userProfile.age) {
+    console.log('Profile incomplete, using default values');
     // Se não tiver perfil completo, usar valores padrão da refeição
     return {
       ...meal,
@@ -168,13 +171,17 @@ const adjustMealNutrition = (meal: Meal, userProfile: any, mealIndex: number, to
 
   const { weight, height, age, gender, goal, activityLevel } = userProfile;
   
+  console.log('Calculating nutrition for profile:', { weight, height, age, gender, goal, activityLevel });
+  
   // Calcular necessidades diárias
   const bmr = calculateBMR(weight, height, age, gender);
   const tdee = calculateTDEE(bmr, activityLevel);
   const dailyCalories = calculateDailyCalories(tdee, goal);
   const dailyMacros = calculateMacros(dailyCalories, goal);
 
-  // Distribuição de calorias por refeição
+  console.log('Daily targets:', { bmr: Math.round(bmr), tdee: Math.round(tdee), dailyCalories, dailyMacros });
+
+  // Distribuição de calorias por refeição baseada no número de refeições
   const mealCalorieDistribution = {
     3: [0.25, 0.45, 0.30], // café, almoço, jantar
     4: [0.25, 0.35, 0.15, 0.25], // café, almoço, lanche, jantar
@@ -187,6 +194,8 @@ const adjustMealNutrition = (meal: Meal, userProfile: any, mealIndex: number, to
   const mealCarbs = Math.round(dailyMacros.carbs * distribution[mealIndex]);
   const mealFat = Math.round(dailyMacros.fat * distribution[mealIndex]);
 
+  console.log('Meal nutrition adjusted:', { mealCalories, mealProtein, mealCarbs, mealFat });
+
   // Garantir que os valores são válidos
   return {
     ...meal,
@@ -198,10 +207,12 @@ const adjustMealNutrition = (meal: Meal, userProfile: any, mealIndex: number, to
 };
 
 export const generateNewMealPlan = (dietaryPreferences: string[] = [], userProfile?: any): Meal[] => {
+  console.log('Generating new meal plan with profile:', userProfile);
+  
   // Usar o número de refeições do perfil do usuário, com fallback para 4
   const mealsPerDay = userProfile?.mealsPerDay || 4;
   
-  console.log('Gerando plano com', mealsPerDay, 'refeições');
+  console.log('Generating plan with', mealsPerDay, 'meals per day');
   
   // Definir tipos de refeição baseado no número escolhido
   let mealTypes: string[] = [];
@@ -214,9 +225,15 @@ export const generateNewMealPlan = (dietaryPreferences: string[] = [], userProfi
     mealTypes = ["Café da Manhã", "Lanche da Manhã", "Almoço", "Lanche da Tarde", "Jantar"];
   }
   
-  return mealTypes.map((type, index) => {
+  const generatedMeals = mealTypes.map((type, index) => {
+    console.log(`Generating meal ${index + 1}/${mealTypes.length}: ${type}`);
+    
     const availableMeals = getMealsByType(type, dietaryPreferences);
+    console.log(`Found ${availableMeals.length} available meals for ${type}`);
+    
     const selectedMeal = getRandomMeal(availableMeals);
+    console.log(`Selected meal: ${selectedMeal.title}`);
+    
     const adjustedMeal = adjustMealNutrition(selectedMeal, userProfile, index, mealsPerDay);
     
     return {
@@ -225,12 +242,17 @@ export const generateNewMealPlan = (dietaryPreferences: string[] = [], userProfi
       consumed: false
     };
   });
+  
+  console.log('Generated meals plan:', generatedMeals.map(m => ({ title: m.title, calories: m.calories })));
+  
+  return generatedMeals;
 };
 
 export const getAlternativeMeal = (mealName: string, dietaryPreferences: string[] = [], userProfile?: any): Meal | null => {
   const availableMeals = getMealsByType(mealName, dietaryPreferences);
   
   if (availableMeals.length === 0) {
+    console.log('No alternative meals found for', mealName);
     return null;
   }
   

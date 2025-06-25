@@ -8,6 +8,62 @@ import { ProfileSetup } from "./ProfileSetup";
 import { MealPlan } from "./MealPlan";
 import { Calendar, User, TrendingUp, Target, Clock } from "lucide-react";
 
+// Função para calcular TMB (Taxa Metabólica Basal)
+const calculateBMR = (weight: number, height: number, age: number, gender: string): number => {
+  if (gender === 'masculino') {
+    return 88.362 + (13.397 * weight) + (4.799 * height) - (5.677 * age);
+  } else {
+    return 447.593 + (9.247 * weight) + (3.098 * height) - (4.330 * age);
+  }
+};
+
+// Função para calcular TDEE
+const calculateTDEE = (bmr: number, activityLevel: string): number => {
+  const activityMultipliers = {
+    sedentario: 1.2,
+    leve: 1.375,
+    moderado: 1.55,
+    intenso: 1.725
+  };
+  return bmr * (activityMultipliers[activityLevel as keyof typeof activityMultipliers] || 1.2);
+};
+
+// Função para calcular calorias diárias baseadas no objetivo
+const calculateDailyCalories = (tdee: number, goal: string): number => {
+  switch (goal) {
+    case 'emagrecimento':
+      return Math.round(tdee * 0.85); // Déficit de 15%
+    case 'ganho_massa':
+      return Math.round(tdee * 1.15); // Superávit de 15%
+    case 'manutencao':
+    default:
+      return Math.round(tdee);
+  }
+};
+
+// Função para calcular macronutrientes
+const calculateMacros = (calories: number, goal: string) => {
+  let proteinRatio = 0.25;
+  let carbRatio = 0.45;
+  let fatRatio = 0.30;
+
+  if (goal === 'ganho_massa') {
+    proteinRatio = 0.30;
+    carbRatio = 0.40;
+    fatRatio = 0.30;
+  } else if (goal === 'emagrecimento') {
+    proteinRatio = 0.35;
+    carbRatio = 0.30;
+    fatRatio = 0.35;
+  }
+
+  return {
+    protein: Math.round((calories * proteinRatio) / 4), // 4 cal/g
+    carbs: Math.round((calories * carbRatio) / 4), // 4 cal/g
+    fat: Math.round((calories * fatRatio) / 9) // 9 cal/g
+  };
+};
+
 export const Dashboard = () => {
   const { user } = useAuthStore();
   const { meals } = useMealStore();
@@ -15,6 +71,13 @@ export const Dashboard = () => {
   if (!user?.profile) {
     return <ProfileSetup />;
   }
+
+  // Calcular metas diárias baseadas no perfil do usuário
+  const { weight, height, age, gender, goal, activityLevel } = user.profile;
+  const bmr = calculateBMR(weight, height, age, gender);
+  const tdee = calculateTDEE(bmr, activityLevel);
+  const dailyCalories = calculateDailyCalories(tdee, goal);
+  const dailyMacros = calculateMacros(dailyCalories, goal);
 
   // Calcular progresso baseado nas refeições consumidas
   const consumedMeals = meals.filter(meal => meal.consumed);
@@ -34,19 +97,19 @@ export const Dashboard = () => {
   const todayProgress = {
     calories: {
       consumed: safeCalories,
-      target: 1800
+      target: dailyCalories
     },
     protein: {
       consumed: safeProtein,
-      target: 120
+      target: dailyMacros.protein
     },
     carbs: {
       consumed: safeCarbs,
-      target: 200
+      target: dailyMacros.carbs
     },
     fat: {
       consumed: safeFat,
-      target: 60
+      target: dailyMacros.fat
     }
   };
 
@@ -56,13 +119,20 @@ export const Dashboard = () => {
   const carbsProgress = Math.min((todayProgress.carbs.consumed / todayProgress.carbs.target) * 100, 100);
   const fatProgress = Math.min((todayProgress.fat.consumed / todayProgress.fat.target) * 100, 100);
 
+  // Objetivo em português
+  const goalLabels = {
+    emagrecimento: 'Emagrecimento',
+    ganho_massa: 'Ganho de Massa',
+    manutencao: 'Manutenção'
+  };
+
   return (
     <div className="space-y-8">
       {/* Welcome Section */}
       <div className="bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl p-6 text-white">
         <h2 className="text-2xl font-bold mb-2">Olá, {user.name}! 👋</h2>
         <p className="opacity-90">
-          Aqui está seu resumo nutricional de hoje. Continue assim!
+          Objetivo: {goalLabels[goal]} • Meta diária: {dailyCalories} calorias
         </p>
       </div>
 
