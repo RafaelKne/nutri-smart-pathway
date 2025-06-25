@@ -62,7 +62,7 @@ export const Dashboard = () => {
   const fatProgress = Math.min(todayProgress.fat.consumed / todayProgress.fat.target * 100, 100);
   return <div className="space-y-8 bg-slate-800">
       {/* Welcome Section */}
-      <div className="bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl p-6 text-white">
+      <div className="bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl p-6 text-white bg-slate-600">
         <h2 className="text-2xl font-bold mb-2">Olá, {user.name}! 👋</h2>
         <p className="opacity-90">
           Aqui está seu resumo nutricional de hoje. Continue assim!
