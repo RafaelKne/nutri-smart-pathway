@@ -99,9 +99,10 @@ export const ProfileSetup = () => {
   const onSubmit = (data: ProfileFormData) => {
     console.log('Submitting profile data:', data);
     
+    const mealsPerDay = Number(data.mealsPerDay);
     const profileData: UserProfile = {
       ...data,
-      mealsPerDay: data.mealsPerDay,
+      mealsPerDay: (mealsPerDay === 3 || mealsPerDay === 4 || mealsPerDay === 5) ? mealsPerDay : 4,
       dailyWaterGoal: 0,
       waterConsumed: 0,
     };

@@ -253,7 +253,8 @@ export const generateNewMealPlan = (dietaryPreferences: string[] = [], userProfi
   console.log('Generating new meal plan with profile:', userProfile);
   
   // Usar o número de refeições do perfil do usuário, com fallback para 4
-  const mealsPerDay = userProfile?.mealsPerDay || 4;
+  // Garantir que é um número, não string
+  const mealsPerDay = parseInt(userProfile?.mealsPerDay) || 4;
   
   console.log('Generating plan with', mealsPerDay, 'meals per day');
   
@@ -266,13 +267,24 @@ export const generateNewMealPlan = (dietaryPreferences: string[] = [], userProfi
     mealTypes = ["Café da Manhã", "Almoço", "Lanche da Tarde", "Jantar"];
   } else if (mealsPerDay === 5) {
     mealTypes = ["Café da Manhã", "Lanche da Manhã", "Almoço", "Lanche da Tarde", "Jantar"];
+  } else {
+    // Fallback for any other number
+    console.warn('Unexpected mealsPerDay value:', mealsPerDay, 'using default 4 meals');
+    mealTypes = ["Café da Manhã", "Almoço", "Lanche da Tarde", "Jantar"];
   }
+  
+  console.log('Meal types to generate:', mealTypes);
   
   const generatedMeals = mealTypes.map((type, index) => {
     console.log(`Generating meal ${index + 1}/${mealTypes.length}: ${type}`);
     
     const availableMeals = getMealsByType(type, dietaryPreferences);
     console.log(`Found ${availableMeals.length} available meals for ${type}`);
+    
+    if (availableMeals.length === 0) {
+      console.error(`No meals found for type: ${type} with preferences:`, dietaryPreferences);
+      return null;
+    }
     
     const selectedMeal = getRandomMeal(availableMeals);
     console.log(`Selected meal: ${selectedMeal.title}`);
@@ -284,7 +296,7 @@ export const generateNewMealPlan = (dietaryPreferences: string[] = [], userProfi
       id: Date.now() + index + 1,
       consumed: false
     };
-  });
+  }).filter(meal => meal !== null);
   
   console.log('Generated meals plan:', generatedMeals.map(m => ({ title: m.title, calories: m.calories })));
   

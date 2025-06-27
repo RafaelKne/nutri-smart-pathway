@@ -114,6 +114,7 @@ NutriPlan is a full-stack nutrition planning application built with React, Expre
 
 ## Changelog
 - June 27, 2025. Initial setup
+- June 27, 2025. Fixed meal generation for 5 meals per day - resolved string/number type conversion issue and added missing "Lanche da Manhã" meal options for all dietary preferences
 
 ## User Preferences
 
