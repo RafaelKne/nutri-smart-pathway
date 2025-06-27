@@ -211,5 +211,67 @@ export const defaultMeals: Meal[] = [
     ingredients: ["1 tortilla integral", "120g frango grelhado", "folhas verdes", "tomate", "abacate"],
     instructions: ["Aqueça a tortilla", "Adicione o frango e vegetais", "Enrole bem", "Corte ao meio"],
     consumed: false
+  },
+
+  // Lanche da Manhã
+  {
+    id: 15,
+    name: "Lanche da Manhã",
+    time: "09:30",
+    title: "Iogurte com Granola e Frutas",
+    calories: 280,
+    protein: 12,
+    carbs: 38,
+    fat: 10,
+    prepTime: "3 min",
+    servings: 1,
+    ingredients: ["200g iogurte natural", "30g granola", "1 banana", "frutas vermelhas", "1 colher mel"],
+    instructions: ["Corte a banana", "Monte o iogurte na tigela", "Adicione granola e frutas", "Finalize com mel"],
+    consumed: false
+  },
+  {
+    id: 16,
+    name: "Lanche da Manhã",
+    time: "09:30",
+    title: "Sanduíche Natural Light",
+    calories: 320,
+    protein: 18,
+    carbs: 25,
+    fat: 15,
+    prepTime: "8 min",
+    servings: 1,
+    ingredients: ["2 fatias pão integral", "50g peito de peru", "50g queijo branco", "tomate", "alface", "azeite"],
+    instructions: ["Torre o pão levemente", "Monte com peito de peru e queijo", "Adicione vegetais", "Finalize com fio de azeite"],
+    consumed: false
+  },
+  {
+    id: 17,
+    name: "Lanche da Manhã",
+    time: "09:30",
+    title: "Mix de Frutas com Castanhas",
+    calories: 290,
+    protein: 8,
+    carbs: 35,
+    fat: 14,
+    prepTime: "5 min",
+    servings: 1,
+    ingredients: ["1 maçã", "1 pera", "30g castanhas mistas", "10g passas", "canela em pó"],
+    instructions: ["Corte as frutas em pedaços", "Misture com castanhas e passas", "Polvilhe canela", "Sirva fresco"],
+    consumed: false
+  },
+  {
+    id: 18,
+    name: "Lanche da Manhã",
+    time: "09:30",
+    title: "Vitamina Proteica",
+    calories: 310,
+    protein: 20,
+    carbs: 30,
+    fat: 12,
+    prepTime: "5 min",
+    servings: 1,
+    ingredients: ["200ml leite", "1 banana", "1 scoop whey protein", "1 colher aveia", "canela"],
+    instructions: ["Bata todos os ingredientes", "Adicione gelo se desejar", "Sirva imediatamente"],
+    consumed: false
   }
 ];
