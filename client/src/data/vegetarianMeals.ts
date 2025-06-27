@@ -144,6 +144,57 @@ export const vegetarianMeals: Meal[] = [
     consumed: false
   },
 
+  // Lanche da Manhã Vegetariano
+  {
+    id: 507,
+    name: "Lanche da Manhã",
+    time: "09:30",
+    title: "Vitamina Verde com Aveia",
+    calories: 280,
+    protein: 12,
+    carbs: 35,
+    fat: 10,
+    prepTime: "5 min",
+    servings: 1,
+    ingredients: [
+      "1 banana",
+      "50ml de leite vegetal",
+      "1 punhado de espinafre",
+      "1 colher de sopa de aveia",
+      "1 colher de chá de pasta de amendoim",
+      "Gelo"
+    ],
+    instructions: [
+      "Bata todos os ingredientes no liquidificador",
+      "Adicione gelo se desejar",
+      "Sirva imediatamente"
+    ],
+    consumed: false
+  },
+  {
+    id: 508,
+    name: "Lanche da Manhã",
+    time: "09:30",
+    title: "Mix de Castanhas e Frutas Secas",
+    calories: 320,
+    protein: 8,
+    carbs: 22,
+    fat: 24,
+    prepTime: "0 min",
+    servings: 1,
+    ingredients: [
+      "30g de castanhas mistas",
+      "20g de frutas secas (damasco, tâmara)",
+      "10g de sementes de girassol",
+      "5g de coco ralado"
+    ],
+    instructions: [
+      "Misture todos os ingredientes",
+      "Consuma como snack energético"
+    ],
+    consumed: false
+  },
+
   // Jantar Vegetariano
   {
     id: 506,
@@ -229,6 +280,60 @@ export const veganMeals: Meal[] = [
       "Adicione proteína vegetal",
       "Despeje na tigela",
       "Decore com granola, coco e chia"
+    ],
+    consumed: false
+  },
+
+  // Lanche da Manhã Vegano
+  {
+    id: 607,
+    name: "Lanche da Manhã",
+    time: "09:30",
+    title: "Smoothie de Açaí Verde",
+    calories: 290,
+    protein: 15,
+    carbs: 38,
+    fat: 12,
+    prepTime: "5 min",
+    servings: 1,
+    ingredients: [
+      "100g de açaí",
+      "1 banana",
+      "1 punhado de espinafre",
+      "200ml de leite de amêndoas",
+      "1 colher de proteína vegetal",
+      "Granola vegana"
+    ],
+    instructions: [
+      "Bata todos os ingredientes no liquidificador",
+      "Sirva com granola por cima",
+      "Consuma imediatamente"
+    ],
+    consumed: false
+  },
+  {
+    id: 608,
+    name: "Lanche da Manhã",
+    time: "09:30",
+    title: "Chia Pudding com Frutas",
+    calories: 310,
+    protein: 10,
+    carbs: 28,
+    fat: 18,
+    prepTime: "5 min + 2h geladeira",
+    servings: 1,
+    ingredients: [
+      "3 colheres de chia",
+      "200ml de leite de coco",
+      "1 colher de xarope de bordo",
+      "Frutas vermelhas",
+      "Coco ralado",
+      "Castanhas picadas"
+    ],
+    instructions: [
+      "Misture chia, leite vegetal e xarope",
+      "Deixe na geladeira por 2 horas",
+      "Sirva com frutas e castanhas"
     ],
     consumed: false
   },

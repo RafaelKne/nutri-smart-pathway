@@ -108,6 +108,12 @@ export const getMealsByType = (mealType: string, dietaryPreferences: string[] = 
   if (dietaryPreferences.includes('Vegano')) {
     availableMeals = veganMeals.filter(meal => meal.name === mealType);
     console.log('Using ONLY vegan meals:', availableMeals.length);
+    
+    // Se não houver refeições veganas para este tipo, usar vegetarianas
+    if (availableMeals.length === 0) {
+      availableMeals = vegetarianMeals.filter(meal => meal.name === mealType);
+      console.log('Fallback to vegetarian meals:', availableMeals.length);
+    }
   }
   // Verificar se a pessoa é vegetariana (mas não vegana)
   else if (dietaryPreferences.includes('Vegetariano') && !dietaryPreferences.includes('Vegano')) {
@@ -129,6 +135,43 @@ export const getMealsByType = (mealType: string, dietaryPreferences: string[] = 
   // Filtrar apenas refeições válidas
   const validMeals = availableMeals.filter(isValidMeal);
   console.log('Valid meals after filtering:', validMeals.length);
+  
+  // Se ainda não há refeições válidas, usar refeições de outros tipos como fallback
+  if (validMeals.length === 0) {
+    console.log('No valid meals found, using fallback strategy');
+    
+    // Tentar usar refeições similares (ex: usar "Café da Manhã" para "Lanche da Manhã")
+    const fallbackTypes = ['Café da Manhã', 'Lanche da Tarde', 'Almoço', 'Jantar'];
+    
+    for (const fallbackType of fallbackTypes) {
+      if (fallbackType === mealType) continue;
+      
+      let fallbackMeals: Meal[] = [];
+      
+      if (dietaryPreferences.includes('Vegano')) {
+        fallbackMeals = veganMeals.filter(meal => meal.name === fallbackType);
+        if (fallbackMeals.length === 0) {
+          fallbackMeals = vegetarianMeals.filter(meal => meal.name === fallbackType);
+        }
+      } else if (dietaryPreferences.includes('Vegetariano')) {
+        const vegetarian = vegetarianMeals.filter(meal => meal.name === fallbackType);
+        const vegan = veganMeals.filter(meal => meal.name === fallbackType);
+        fallbackMeals = [...vegetarian, ...vegan];
+      } else {
+        const defaults = defaultMeals.filter(meal => meal.name === fallbackType);
+        const alternatives = alternativeMeals.filter(meal => meal.name === fallbackType);
+        const basics = basicMeals.filter(meal => meal.name === fallbackType);
+        const extras = extraMeals.filter(meal => meal.name === fallbackType);
+        fallbackMeals = [...defaults, ...alternatives, ...basics, ...extras];
+      }
+      
+      const validFallbacks = fallbackMeals.filter(isValidMeal);
+      if (validFallbacks.length > 0) {
+        console.log(`Using fallback meals from ${fallbackType}:`, validFallbacks.length);
+        return validFallbacks;
+      }
+    }
+  }
   
   return validMeals;
 };
